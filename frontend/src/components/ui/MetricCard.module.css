@@ -1,0 +1,30 @@
+.metric {
+  background: var(--white);
+  border: 0.5px solid var(--border, #e0dbd2);
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+
+.label {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.value {
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--text-dark);
+  line-height: 1.2;
+}
+
+.tag {
+  font-size: 10px;
+  font-weight: 500;
+  margin-top: 5px;
+}
+
+.up    { color: #1D9E75; }
+.down  { color: #E24B4A; }
+.neutral { color: var(--text-muted); }
+.warn  { color: #633806; }

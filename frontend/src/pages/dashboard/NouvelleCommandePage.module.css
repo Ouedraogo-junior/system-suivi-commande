@@ -1,0 +1,314 @@
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 14px;
+  align-items: start;
+}
+
+.colMain, .colSide {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Card */
+.card {
+  background: var(--white);
+  border: 0.5px solid var(--border, #e0dbd2);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.cardHead {
+  padding: 10px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-dark);
+  background: var(--cream);
+  border-bottom: 0.5px solid var(--border, #e0dbd2);
+}
+
+.cardBody {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Client */
+.clientRow {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.clientSearch { position: relative; flex: 1; }
+
+.clientDropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--white);
+  border: 0.5px solid var(--border, #e0dbd2);
+  border-radius: 7px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  z-index: 50;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.clientOption {
+  padding: 9px 12px;
+  cursor: pointer;
+  border-bottom: 0.5px solid var(--cream);
+  transition: background 0.1s ease;
+}
+
+.clientOption:last-child { border-bottom: none; }
+.clientOption:hover { background: var(--cream); }
+
+.clientOptionName {
+  font-size: 12px;
+  color: var(--text-dark);
+  font-weight: 500;
+}
+
+.clientOptionSub {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.clientOptionEmpty {
+  padding: 12px;
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.clientLoading {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.clientSelected {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: #f0f9f1;
+  border: 0.5px solid #b8dfc0;
+  border-radius: 7px;
+}
+
+.clientSelectedName {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--green-dark);
+}
+
+.clientSelectedSub {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.clientChangeBtn {
+  font-size: 11px;
+  color: var(--text-muted);
+  background: transparent;
+  border: 0.5px solid var(--border, #e0dbd2);
+  border-radius: 5px;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s ease;
+}
+
+.clientChangeBtn:hover { background: var(--white); }
+
+/* Lignes */
+.lignesHeader {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding-bottom: 6px;
+  border-bottom: 0.5px solid var(--border, #e0dbd2);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.ligneRow {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 6px 0;
+  border-bottom: 0.5px solid var(--cream);
+}
+
+.ligneRow:last-of-type { border-bottom: none; }
+
+.sousTotal {
+  flex: 1.5;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-dark);
+  padding-top: 8px;
+  white-space: nowrap;
+}
+
+.deleteBtn {
+  width: 28px;
+  height: 32px;
+  border-radius: 5px;
+  border: 0.5px solid var(--border, #e0dbd2);
+  background: var(--white);
+  color: var(--text-muted);
+  font-size: 16px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: background 0.15s ease, color 0.15s ease;
+  flex-shrink: 0;
+}
+
+.deleteBtn:hover:not(:disabled) { background: #fdf0ef; color: #c0392b; }
+.deleteBtn:disabled { opacity: 0.3; cursor: default; }
+
+.addLigneBtn {
+  font-size: 11px;
+  color: var(--green-dark);
+  background: transparent;
+  border: 0.5px dashed #a8cdb0;
+  border-radius: 6px;
+  padding: 7px;
+  cursor: pointer;
+  font-family: inherit;
+  width: 100%;
+  margin-top: 4px;
+  transition: background 0.15s ease;
+}
+
+.addLigneBtn:hover { background: #f0f9f1; }
+
+/* Récapitulatif */
+.recapRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text-muted);
+  padding: 3px 0;
+}
+
+.recapTotal {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-dark);
+  padding: 10px 0 12px;
+  border-top: 1px solid var(--border, #e0dbd2);
+  margin-top: 6px;
+}
+
+/* Formulaire */
+.fgroup { display: flex; flex-direction: column; gap: 5px; }
+
+.flabel {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.finput, .fselect, .ftextarea {
+  border: 0.5px solid var(--border, #e0dbd2);
+  border-radius: 6px;
+  padding: 7px 10px;
+  font-size: 12px;
+  color: var(--text-dark);
+  background: var(--white);
+  font-family: inherit;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.15s ease;
+}
+
+.finput:focus, .fselect:focus, .ftextarea:focus {
+  border-color: var(--green-dark);
+}
+
+.inputError { border-color: #e74c3c !important; }
+
+.ftextarea { resize: none; height: 70px; }
+
+.checkLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-dark);
+  cursor: pointer;
+}
+
+.fieldError {
+  font-size: 10px;
+  color: #e74c3c;
+  margin-top: 3px;
+}
+
+/* Modal */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal {
+  background: var(--white);
+  border-radius: 10px;
+  padding: 20px;
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modalTitle {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-dark);
+  padding-bottom: 10px;
+  border-bottom: 0.5px solid var(--border, #e0dbd2);
+}
+
+.modalActions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  padding-top: 8px;
+  border-top: 0.5px solid var(--border, #e0dbd2);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+  .colSide { order: -1; }
+}
+
+@media (max-width: 600px) {
+  .lignesHeader { display: none; }
+  .ligneRow { flex-wrap: wrap; }
+}

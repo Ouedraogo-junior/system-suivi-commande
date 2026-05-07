@@ -1,0 +1,223 @@
+/* Métriques */
+.metricsRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+/* Deux colonnes */
+.twoCol {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.rightCol {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Topbar actions */
+.periodSelect {
+  border: 0.5px solid var(--border, #e0dbd2);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 12px;
+  color: var(--text-dark);
+  background: var(--white);
+  font-family: 'Outfit', sans-serif;
+  outline: none;
+}
+
+/* Transactions */
+.financeRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 0.5px solid var(--cream);
+  gap: 12px;
+}
+
+.financeRow:last-child { border-bottom: none; }
+
+.financeLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.dotIn  { background: #1D9E75; }
+.dotOut { background: #E24B4A; }
+
+.financeDesc {
+  font-size: 12px;
+  color: var(--text-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.financeCat {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.financeRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.amountIn  { font-size: 13px; font-weight: 500; color: #085041; }
+.amountOut { font-size: 13px; font-weight: 500; color: #791F1F; }
+
+/* Solde box */
+.soldeBox {
+  background: #0d3318;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-top: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.soldeLabel {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.soldeValue {
+  font-size: 18px;
+  font-weight: 500;
+  color: #c8a84b;
+}
+
+/* Bar chart */
+.barChart {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 80px;
+}
+
+.barWrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  justify-content: flex-end;
+}
+
+.bar {
+  width: 100%;
+  border-radius: 3px 3px 0 0;
+  transition: height 0.3s ease;
+}
+
+.barLabel {
+  font-size: 9px;
+  color: var(--text-muted);
+}
+
+.barFooter {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.barFooter span:last-child {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--green-dark);
+}
+
+/* Table agents */
+.agentsTable {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.agentsTable th {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-muted);
+  padding: 8px 14px;
+  text-align: left;
+  border-bottom: 0.5px solid var(--border, #e0dbd2);
+  background: var(--cream);
+}
+
+.agentsTable td {
+  font-size: 12px;
+  color: var(--text-dark);
+  padding: 10px 14px;
+  border-bottom: 0.5px solid var(--cream);
+}
+
+.agentsTable tr:last-child td { border-bottom: none; }
+
+.agentCell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.agAvatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #d6edd9;
+  display: grid;
+  place-items: center;
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--green-dark);
+  flex-shrink: 0;
+}
+
+.statusCell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.statusDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.dotActive   { background: #1D9E75; }
+.dotInactive { background: #B4B2A9; }
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .metricsRow { grid-template-columns: repeat(2, 1fr); }
+  .twoCol     { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+  .metricsRow { grid-template-columns: 1fr 1fr; }
+}
