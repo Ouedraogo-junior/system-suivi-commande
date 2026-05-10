@@ -1,5 +1,6 @@
+// src/pages/dashboard/CommandesPage.jsx
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import AppLayout from '../../components/layout/AppLayout';
 import Button from '../../components/ui/Button';
 import Badge from '../../components/ui/Badge';
@@ -43,6 +44,16 @@ function CommandeRow({ cmd, onVoir }) {
           <span>{cmd.client?.nom_complet}</span>
         </div>
       </td>
+
+      <td>
+        <div className={styles.clientCell}>
+          <div className={styles.clientAv}>
+            {getInitiales(cmd.agent?.nom_complet)}
+          </div>
+          <span>{cmd.agent?.nom_complet ?? '—'}</span>
+        </div>
+      </td>
+
       <td>
         <span className={styles.badgeSvc}>
           {SERVICES_LABELS[cmd.service] ?? cmd.service}
@@ -104,7 +115,10 @@ function Pagination({ meta, onPage }) {
 // ===== PAGE =====
 export default function CommandesPage() {
   const navigate = useNavigate();
+  const location = useLocation();
 
+  const basePath = location.pathname.startsWith('/admin') ? '/admin' : '/dashboard';
+  
   const [filtreActif, setFiltreActif] = useState(FILTRES[0]);
   const [search, setSearch]           = useState('');
   const [page, setPage]               = useState(1);
@@ -128,13 +142,12 @@ export default function CommandesPage() {
   return (
     <AppLayout
       title="Commandes"
-      subtitle="Liste de mes commandes"
+      subtitle="Liste des commandes"
       topbarActions={
         <Button
           variant="primary"
           size="sm"
-          onClick={() => navigate('/dashboard/commandes/nouvelle')}
-        >
+          onClick={() => navigate(`${basePath}/commandes/nouvelle`)}>
           + Nouvelle commande
         </Button>
       }
@@ -170,6 +183,7 @@ export default function CommandesPage() {
             <tr>
               <th style={{ width: '130px' }}>Référence</th>
               <th style={{ width: '160px' }}>Client</th>
+              <th style={{ width: '130px' }}>Agent</th>
               <th style={{ width: '120px' }}>Service</th>
               <th style={{ width: '120px' }}>Montant</th>
               <th style={{ width: '105px' }}>Paiement</th>
@@ -180,7 +194,7 @@ export default function CommandesPage() {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={7} className={styles.emptyRow}>
+                <td colSpan={8} className={styles.emptyRow}>
                   Chargement...
                 </td>
               </tr>
@@ -189,12 +203,12 @@ export default function CommandesPage() {
                 <CommandeRow
                   key={c.id}
                   cmd={c}
-                  onVoir={(id) => navigate(`/dashboard/commandes/${id}`)}
+                  onVoir={(id) => navigate(`${basePath}/commandes/${id}`)}
                 />
               ))
             ) : (
               <tr>
-                <td colSpan={7} className={styles.emptyRow}>
+                <td colSpan={8} className={styles.emptyRow}>
                   Aucune commande trouvée.
                 </td>
               </tr>

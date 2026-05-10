@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\Commande;
 
 class User extends Authenticatable
 {
@@ -31,6 +32,11 @@ class User extends Authenticatable
             'actif'      => 'boolean',
             'synced_at'  => 'datetime',
         ];
+    }
+
+    public function commandes()
+    {
+        return $this->hasMany(Commande::class, 'agent_id');
     }
 
     public function isAdmin(): bool

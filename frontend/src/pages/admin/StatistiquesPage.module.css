@@ -1,0 +1,232 @@
+.loadingMsg {
+  padding: 40px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.anneeSelect {
+  border: 0.5px solid var(--border, #e0dbd2);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-family: inherit;
+  color: var(--text-dark);
+  background: var(--white);
+  outline: none;
+}
+
+/* Résumé */
+.resumeRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.resumeCard {
+  background: var(--white);
+  border: 0.5px solid var(--border, #e0dbd2);
+  border-radius: 8px;
+  padding: 14px 16px;
+  border-left: 3px solid transparent;
+}
+
+.cardEntree   { border-left-color: #1D9E75; }
+.cardSortie   { border-left-color: #c0392b; }
+.cardSoldePos { border-left-color: var(--green-dark); }
+.cardSoldeNeg { border-left-color: #c0392b; }
+
+.resumeLabel {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.resumeValue {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+/* Grille */
+.grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 14px;
+  align-items: start;
+}
+
+/* Card */
+.card {
+  background: var(--white);
+  border: 0.5px solid var(--border, #e0dbd2);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.cardHead {
+  padding: 10px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-dark);
+  background: var(--cream);
+  border-bottom: 0.5px solid var(--border, #e0dbd2);
+}
+
+.cardBody {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Graphique barres */
+.barChart {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 130px;
+  padding-bottom: 20px;
+  position: relative;
+}
+
+.barGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+}
+
+.barPair {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 100px;
+}
+
+.bar {
+  width: 10px;
+  border-radius: 2px 2px 0 0;
+  min-height: 2px;
+  transition: height 0.4s ease;
+}
+
+.barEntree { background: #1D9E75; }
+.barSortie { background: #f5a8a0; }
+
+.barLabel {
+  font-size: 9px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.barLegend {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  gap: 10px;
+  font-size: 10px;
+}
+
+.legendEntree { color: #1D9E75; }
+.legendSortie { color: #c0392b; }
+
+/* Commandes stats */
+.cmdGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  text-align: center;
+}
+
+.cmdStat {
+  background: var(--cream);
+  border-radius: 7px;
+  padding: 10px 6px;
+}
+
+.cmdValue {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.cmdLabel {
+  font-size: 9px;
+  color: var(--text-muted);
+  margin-top: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.vGreen { color: #1D9E75; }
+.vRed   { color: #c0392b; }
+.vAmber { color: #EF9F27; }
+.vBlue  { color: #378ADD; }
+
+/* Taux complétion */
+.tauxWrap { }
+
+.tauxLabel {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.progressBar {
+  height: 6px;
+  background: #eee;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--green-dark);
+  border-radius: 10px;
+  transition: width 0.4s ease;
+}
+
+/* Tableau mensuel */
+.mensuelWrap { overflow-x: auto; }
+
+.mensuelTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+
+.mensuelTable th {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-muted);
+  padding: 6px 8px;
+  text-align: left;
+  border-bottom: 0.5px solid var(--border, #e0dbd2);
+  background: var(--cream);
+}
+
+.mensuelTable td {
+  padding: 6px 8px;
+  border-bottom: 0.5px solid var(--cream);
+  color: var(--text-dark);
+}
+
+.mensuelTable tr:last-child td { border-bottom: none; }
+.moisCell { font-weight: 500; text-transform: capitalize; }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .grid          { grid-template-columns: 1fr; }
+  .resumeRow     { grid-template-columns: 1fr 1fr; }
+  .cmdGrid       { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 480px) {
+  .resumeRow { grid-template-columns: 1fr; }
+}

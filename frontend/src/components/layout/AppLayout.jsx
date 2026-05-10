@@ -76,6 +76,7 @@ const NAV_ADMIN = [
     links: [
       { label: 'Vue globale',  icon: Icons.dashboard,     to: '/admin' },
       { label: 'Commandes',    icon: Icons.commandes,     to: '/admin/commandes' },
+      { label: 'Clients',     icon: Icons.clients,    to: '/admin/clients' },
       { label: 'Agents',       icon: Icons.agents,        to: '/admin/agents' },
     ],
   },

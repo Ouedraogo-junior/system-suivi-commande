@@ -221,3 +221,87 @@
 @media (max-width: 480px) {
   .metricsRow { grid-template-columns: 1fr 1fr; }
 }
+
+.agentPseudo {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+
+.loadingMsg {
+  padding: 20px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.ref {
+  font-family: monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* Modal */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal {
+  background: var(--white);
+  border-radius: 10px;
+  padding: 20px;
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modalTitle {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-dark);
+  padding-bottom: 10px;
+  border-bottom: 0.5px solid var(--border, #e0dbd2);
+}
+
+.modalActions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  padding-top: 8px;
+  border-top: 0.5px solid var(--border, #e0dbd2);
+}
+
+.fgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.fgroup { display: flex; flex-direction: column; gap: 5px; }
+
+.flabel {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.finput, .fselect {
+  border: 0.5px solid var(--border, #e0dbd2);
+  border-radius: 6px;
+  padding: 7px 10px;
+  font-size: 12px;
+  color: var(--text-dark);
+  background: var(--white);
+  font-family: inherit;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.15s ease;
+}
+
+.finput:focus, .fselect:focus { border-color: var(--green-dark); }

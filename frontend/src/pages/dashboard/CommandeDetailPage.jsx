@@ -1,10 +1,12 @@
+// src/pages/dashboard/CommandeDetailPage.jsx
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import AppLayout from '../../components/layout/AppLayout';
 import Button from '../../components/ui/Button';
 import Badge from '../../components/ui/Badge';
 import api from '../../lib/axios';
 import styles from './CommandeDetailPage.module.css';
+import ModalDocument from '../../components/ui/ModalDocument';
 
 // ===== HELPERS =====
 const SERVICES_LABELS = {
@@ -185,16 +187,159 @@ function ModalVersement({ onConfirm, onCancel, loading }) {
   );
 }
 
+
+// ===== MODAL EDITION LIGNES =====
+function ModalEditionLignes({ commande, onConfirm, onCancel, loading }) {
+  const [lignes, setLignes] = useState(
+    commande.lignes.map(l => ({
+      id:            l.id,
+      designation:   l.designation,
+      quantite:      String(l.quantite),
+      prix_unitaire: String(l.prix_unitaire),
+    }))
+  );
+
+  const setLigne = (i, k, v) =>
+    setLignes(ls => ls.map((l, idx) => idx === i ? { ...l, [k]: v } : l));
+
+  const ajouterLigne = () =>
+    setLignes(ls => [...ls, { id: null, designation: '', quantite: '1', prix_unitaire: '0' }]);
+
+  const supprimerLigne = (i) =>
+    setLignes(ls => ls.filter((_, idx) => idx !== i));
+
+  const brut = lignes.reduce((s, l) => s + (Number(l.quantite) * Number(l.prix_unitaire)), 0);
+  const remise = brut * (commande.remise / 100);
+  const netHT  = brut - remise;
+  const tva    = commande.tva_applicable ? netHT * 0.18 : 0;
+  const total  = netHT + tva;
+
+  const valide = lignes.length > 0 && lignes.every(
+    l => l.designation.trim() && Number(l.quantite) > 0 && Number(l.prix_unitaire) >= 0
+  );
+
+  return (
+    <div className={styles.modalOverlay}>
+      <div className={styles.modalLarge}>
+        <div className={styles.modalTitle}>Modifier les lignes de commande</div>
+
+        <div className={styles.lignesEditWrap}>
+          <table className={styles.lignesTable}>
+            <thead>
+              <tr>
+                <th style={{ width: '40%' }}>Désignation</th>
+                <th style={{ width: '15%' }}>Qté</th>
+                <th style={{ width: '20%' }}>Prix unitaire</th>
+                <th style={{ width: '20%' }}>Sous-total</th>
+                <th style={{ width: '5%'  }}></th>
+              </tr>
+            </thead>
+            <tbody>
+              {lignes.map((l, i) => (
+                <tr key={i}>
+                  <td>
+                    <input
+                      className={styles.finput}
+                      value={l.designation}
+                      onChange={e => setLigne(i, 'designation', e.target.value)}
+                      placeholder="Désignation..."
+                    />
+                  </td>
+                  <td>
+                    <input
+                      className={styles.finput}
+                      type="number"
+                      min="0.01"
+                      step="0.01"
+                      value={l.quantite}
+                      onChange={e => setLigne(i, 'quantite', e.target.value)}
+                    />
+                  </td>
+                  <td>
+                    <input
+                      className={styles.finput}
+                      type="number"
+                      min="0"
+                      value={l.prix_unitaire}
+                      onChange={e => setLigne(i, 'prix_unitaire', e.target.value)}
+                    />
+                  </td>
+                  <td className={styles.sousTotal}>
+                    {formatMontant(Number(l.quantite) * Number(l.prix_unitaire))}
+                  </td>
+                  <td>
+                    <button
+                      className={styles.btnSupprLigne}
+                      onClick={() => supprimerLigne(i)}
+                      disabled={lignes.length === 1}
+                      title="Supprimer"
+                    >×</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          <button className={styles.btnAjouterLigne} onClick={ajouterLigne}>
+            + Ajouter une ligne
+          </button>
+        </div>
+
+        {/* Récap */}
+        <div className={styles.editRecap}>
+          <div className={styles.editRecapRow}>
+            <span>Montant brut</span>
+            <span>{formatMontant(brut)}</span>
+          </div>
+          {commande.remise > 0 && (
+            <div className={styles.editRecapRow}>
+              <span>Remise ({commande.remise}%)</span>
+              <span>− {formatMontant(remise)}</span>
+            </div>
+          )}
+          {commande.tva_applicable && (
+            <div className={styles.editRecapRow}>
+              <span>TVA (18%)</span>
+              <span>+ {formatMontant(tva)}</span>
+            </div>
+          )}
+          <div className={`${styles.editRecapRow} ${styles.editRecapTotal}`}>
+            <span>Total TTC</span>
+            <span>{formatMontant(total)}</span>
+          </div>
+        </div>
+
+        <div className={styles.modalActions}>
+          <Button variant="ghost" size="sm" onClick={onCancel}>Annuler</Button>
+          <Button
+            variant="primary"
+            size="sm"
+            disabled={loading || !valide}
+            onClick={() => onConfirm({ lignes: lignes.map(l => ({ ...l, id: l.id || undefined })) })}
+          >
+            {loading ? 'En cours...' : 'Enregistrer'}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ===== PAGE =====
 export default function CommandeDetailPage() {
   const { id }   = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const basePath = location.pathname.startsWith('/admin') ? '/admin' : '/dashboard';
+  const [modalDoc, setModalDoc] = useState(null); // 'PRO_FORMA' | 'FACTURE' | null
+
 
   const [commande, setCommande]         = useState(null);
   const [loading, setLoading]           = useState(true);
   const [error, setError]               = useState(null);
   const [modalStatut, setModalStatut]   = useState(false);
   const [modalVers, setModalVers]       = useState(false);
+  const [modalEdition, setModalEdition] = useState(false);
   const [actionLoading, setActionLoad]  = useState(false);
 
   const fetchCommande = async () => {
@@ -237,6 +382,19 @@ export default function CommandeDetailPage() {
     }
   };
 
+  const handleEditionLignes = async (payload) => {
+    setActionLoad(true);
+    try {
+      await api.put(`/commandes/${id}`, payload);
+      setModalEdition(false);
+      await fetchCommande();
+    } catch (e) {
+      alert(e.response?.data?.message ?? 'Erreur lors de la modification.');
+    } finally {
+      setActionLoad(false);
+    }
+  };
+
   // ── Rendu ──────────────────────────────────────────────
   if (loading) {
     return (
@@ -269,6 +427,12 @@ export default function CommandeDetailPage() {
           <Button variant="outline" size="sm" onClick={() => navigate(-1)}>
             ← Retour
           </Button>
+          <Button variant="ghost" size="sm" onClick={() => setModalDoc('PRO_FORMA')}>
+            📄 Pro forma
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => setModalDoc('FACTURE')}>
+            🧾 Facture
+          </Button>
           {peutChangerStatut && (
             <Button variant="primary" size="sm" onClick={() => setModalStatut(true)}>
               Changer statut
@@ -276,6 +440,7 @@ export default function CommandeDetailPage() {
           )}
         </div>
       }
+
     >
       {/* ── Résumé ── */}
       <div className={styles.summaryRow}>
@@ -387,7 +552,16 @@ export default function CommandeDetailPage() {
         <div className={styles.colRight}>
 
           {/* Lignes commande */}
-          <Section title="Lignes de commande">
+          <Section
+              title="Lignes de commande"
+              action={
+                commande.statut !== 'ANNULE' && (
+                  <Button variant="outline" size="sm" onClick={() => setModalEdition(true)}>
+                    ✏️ Modifier
+                  </Button>
+                )
+              }
+            >
             <div className={styles.lignesWrap}>
               <table className={styles.lignesTable}>
                 <thead>
@@ -459,6 +633,7 @@ export default function CommandeDetailPage() {
                       <th>N°</th>
                       <th>Date</th>
                       <th>Référence</th>
+                      <th>Agent</th>
                       <th>Montant</th>
                     </tr>
                   </thead>
@@ -468,6 +643,7 @@ export default function CommandeDetailPage() {
                         <td>#{v.numero_versement}</td>
                         <td>{formatDate(v.date_versement)}</td>
                         <td>{v.reference ?? '—'}</td>
+                        <td>{v.agent?.nom_complet ?? '—'}</td>
                         <td className={styles.sousTotal}>{formatMontant(v.montant)}</td>
                       </tr>
                     ))}
@@ -504,6 +680,24 @@ export default function CommandeDetailPage() {
           loading={actionLoading}
         />
       )}
+
+      {modalDoc && (
+        <ModalDocument
+          commande={commande}
+          type={modalDoc}
+          onClose={() => setModalDoc(null)}
+        />
+      )}
+
+      {modalEdition && (
+        <ModalEditionLignes
+          commande={commande}
+          onConfirm={handleEditionLignes}
+          onCancel={() => setModalEdition(false)}
+          loading={actionLoading}
+        />
+      )}
+
     </AppLayout>
   );
 }

@@ -312,3 +312,16 @@
   .lignesHeader { display: none; }
   .ligneRow { flex-wrap: wrap; }
 }
+
+.creeeActions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.creeeMsg {
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: #1a5c2a;
+  padding: 6px 0;
+}

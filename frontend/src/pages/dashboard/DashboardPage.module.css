@@ -189,91 +189,27 @@
 }
 
 /* ===== FORMULAIRE ===== */
-.formPanel {
-  background: var(--white);
-  border: 0.5px solid var(--border, #e0dbd2);
-  border-radius: 10px;
-  padding: 16px;
-  margin-top: 16px;
-}
 
-.formTitle {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text-dark);
-  margin-bottom: 14px;
-  padding-bottom: 10px;
-  border-bottom: 0.5px solid var(--border, #e0dbd2);
-}
 
-.fgrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-.fgroup {
-  margin-bottom: 10px;
-}
-
-.flabel {
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--text-muted);
-  margin-bottom: 5px;
-  display: block;
-  font-weight: 500;
-}
-
-.finput,
-.fselect,
-.ftextarea {
-  width: 100%;
-  border: 0.5px solid var(--border, #e0dbd2);
-  border-radius: 6px;
-  padding: 7px 10px;
-  font-size: 12px;
-  color: var(--text-dark);
-  background: var(--white);
-  font-family: inherit;
-  outline: none;
-  transition: border-color 0.15s ease;
-}
-
-.finput:focus,
-.fselect:focus,
-.ftextarea:focus {
-  border-color: var(--green-dark);
-}
-
-.ftextarea {
-  resize: none;
-  height: 70px;
-}
-
-.fradioGroup {
-  display: flex;
-  gap: 16px;
-}
-
-.fradio {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: var(--text-dark);
-  cursor: pointer;
-}
-
-.formActions {
-  display: flex;
-  gap: 8px;
-  justify-content: flex-end;
-  margin-top: 12px;
-  padding-top: 12px;
+.tableFooter {
+  padding: 10px 14px;
   border-top: 0.5px solid var(--border, #e0dbd2);
+  text-align: center;
 }
+
+.voirToutBtn {
+  font-size: 12px;
+  color: var(--green-dark);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  padding: 4px 8px;
+  border-radius: 5px;
+  transition: background 0.15s ease;
+}
+
+.voirToutBtn:hover { background: var(--cream); }
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 1024px) {

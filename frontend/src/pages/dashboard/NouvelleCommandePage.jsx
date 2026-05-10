@@ -1,9 +1,11 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+// src/pages/dashboard/NouvelleCommandePage.jsx
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import AppLayout from '../../components/layout/AppLayout';
 import Button from '../../components/ui/Button';
 import api from '../../lib/axios';
 import styles from './NouvelleCommandePage.module.css';
+import ModalDocument from '../../components/ui/ModalDocument';
 
 // ===== CONSTANTES =====
 const SERVICES = [
@@ -148,6 +150,8 @@ function ModalNouveauClient({ onConfirm, onCancel, loading }) {
 // ===== PAGE =====
 export default function NouvelleCommandePage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const basePath = location.pathname.startsWith('/admin') ? '/admin' : '/dashboard';
 
   // Client
   const [clientSearch, setClientSearch]   = useState('');
@@ -166,6 +170,19 @@ export default function NouvelleCommandePage() {
   // Soumission
   const [errors, setErrors]   = useState({});
   const [loading, setLoading] = useState(false);
+
+  // Documents
+  const [commandeCree, setCommandeCree]       = useState(null);
+  const [modalDoc, setModalDoc]               = useState(null); // 'PRO_FORMA' | null
+
+
+  // ── Pré-remplissage client depuis navigation ──────────
+  useEffect(() => {
+    if (location.state?.client) {
+      setClient(location.state.client);
+      setClientSearch(location.state.client.nom_complet);
+    }
+  }, []);
 
   // ── Lignes ────────────────────────────────────────────
   const updateLigne = (key, field, val) => {
@@ -233,7 +250,7 @@ export default function NouvelleCommandePage() {
           ordre:         i + 1,
         })),
       });
-      navigate(`/dashboard/commandes/${data.id}`);
+      setCommandeCree(data); // stocker pour le modal PDF
     } catch (e) {
       const msg = e.response?.data?.message ?? 'Erreur lors de la création.';
       alert(msg);
@@ -241,6 +258,7 @@ export default function NouvelleCommandePage() {
       setLoading(false);
     }
   };
+
 
   // ── Rendu ─────────────────────────────────────────────
   return (
@@ -426,7 +444,7 @@ export default function NouvelleCommandePage() {
                 <span>{formatMontant(total)}</span>
               </div>
 
-              <Button
+              {/* <Button
                 variant="primary"
                 size="md"
                 fullWidth
@@ -434,7 +452,41 @@ export default function NouvelleCommandePage() {
                 disabled={loading}
               >
                 {loading ? 'Enregistrement...' : 'Créer la commande'}
-              </Button>
+              </Button> */}
+
+              {commandeCree ? (
+                // ── Commande créée : actions document ──
+                <div className={styles.creeeActions}>
+                  <div className={styles.creeeMsg}>✓ Commande créée</div>
+                  <Button
+                    variant="primary"
+                    size="md"
+                    fullWidth
+                    onClick={() => setModalDoc('PRO_FORMA')}
+                  >
+                    📄 Générer le pro forma
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="md"
+                    fullWidth
+                    onClick={() => navigate(`${basePath}/commandes/${commandeCree.id}`)}
+                  >
+                    Voir la commande →
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  variant="primary"
+                  size="md"
+                  fullWidth
+                  onClick={handleSubmit}
+                  disabled={loading}
+                >
+                  {loading ? 'Enregistrement...' : 'Créer la commande'}
+                </Button>
+              )}
+
             </div>
           </div>
         </div>
@@ -447,6 +499,18 @@ export default function NouvelleCommandePage() {
           loading={clientLoading}
         />
       )}
+
+      {modalDoc && commandeCree && (
+        <ModalDocument
+          commande={{ ...commandeCree, versements: [] }}
+          type={modalDoc}
+          onClose={() => {
+            setModalDoc(null);
+            navigate(`${basePath}/commandes/${commandeCree.id}`);
+          }}
+        />
+      )}
+
     </AppLayout>
   );
 }

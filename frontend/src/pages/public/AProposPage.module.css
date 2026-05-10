@@ -1,0 +1,45 @@
+/* src/pages/public/AProposPage.module.css */
+
+.page {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--white);
+}
+
+/* ── CTA ── */
+.cta {
+  padding: 64px 40px;
+  background: var(--green-dark);
+  text-align: center;
+}
+
+.ctaTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  color: #fff;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.ctaSub {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 28px;
+  line-height: 1.6;
+}
+
+.ctaBtn {
+  display: inline-block;
+  background: var(--brown);
+  color: #fff;
+  padding: 12px 28px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+.ctaBtn:hover { opacity: 0.85; }
+
+@media (max-width: 900px) {
+  .cta { padding: 48px 20px; }
+}

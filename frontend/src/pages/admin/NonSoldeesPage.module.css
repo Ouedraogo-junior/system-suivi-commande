@@ -1,0 +1,120 @@
+.toolbar {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.filterBtn {
+  font-size: 11px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 0.5px solid var(--border, #e0dbd2);
+  background: var(--white);
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s ease;
+}
+
+.filterBtn:hover { background: var(--cream); }
+.filterBtnOn {
+  background: var(--green-dark) !important;
+  color: var(--white) !important;
+  border-color: var(--green-dark) !important;
+}
+
+.tableWrap {
+  background: var(--white);
+  border: 0.5px solid var(--border, #e0dbd2);
+  border-radius: 10px;
+  overflow: hidden;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 700px;
+}
+
+.table thead tr { background: var(--cream); }
+
+.table th {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  padding: 9px 12px;
+  text-align: left;
+  border-bottom: 0.5px solid var(--border, #e0dbd2);
+  white-space: nowrap;
+}
+
+.table td {
+  font-size: 12px;
+  color: var(--text-dark);
+  padding: 10px 12px;
+  border-bottom: 0.5px solid var(--cream);
+  vertical-align: middle;
+}
+
+.table tr:last-child td { border-bottom: none; }
+.table tbody tr:hover td { background: #fafaf8; }
+
+.rowRetard td { background: #fffbf0 !important; }
+.rowRetard:hover td { background: #fff8e6 !important; }
+
+.ref {
+  font-family: monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.clientCell { display: flex; align-items: center; gap: 7px; }
+
+.clientAv {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #d6edd9;
+  display: grid;
+  place-items: center;
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--green-dark);
+  flex-shrink: 0;
+}
+
+.muted { color: var(--text-muted); font-size: 11px; }
+
+.dateRetard { color: #EF9F27; font-size: 11px; }
+
+.retardTag {
+  display: inline-block;
+  margin-left: 6px;
+  font-size: 9px;
+  background: #fef3cd;
+  color: #856404;
+  padding: 1px 6px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+.montant      { font-weight: 500; white-space: nowrap; }
+.montantPaye  { color: #1D9E75; font-weight: 500; white-space: nowrap; }
+.montantReste { color: #c0392b; font-weight: 600; white-space: nowrap; }
+
+.emptyRow {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 12px;
+  padding: 32px !important;
+}
+
+.tfootTotal td {
+  padding: 10px 12px;
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--text-dark);
+  background: var(--cream);
+  border-top: 1px solid var(--border, #e0dbd2);
+}

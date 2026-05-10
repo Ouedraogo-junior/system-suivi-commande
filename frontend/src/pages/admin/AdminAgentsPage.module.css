@@ -1,0 +1,188 @@
+.toolbar { margin-bottom: 12px; }
+
+.searchInput {
+  border: 0.5px solid var(--border, #e0dbd2);
+  border-radius: 6px;
+  padding: 7px 12px;
+  font-size: 12px;
+  font-family: inherit;
+  color: var(--text-dark);
+  background: var(--white);
+  outline: none;
+  width: 100%;
+  max-width: 340px;
+  transition: border-color 0.15s ease;
+}
+
+.searchInput:focus { border-color: var(--green-dark); }
+
+.tableWrap {
+  background: var(--white);
+  border: 0.5px solid var(--border, #e0dbd2);
+  border-radius: 10px;
+  overflow: hidden;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 560px;
+}
+
+.table thead tr { background: var(--cream); }
+
+.table th {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  padding: 9px 12px;
+  text-align: left;
+  border-bottom: 0.5px solid var(--border, #e0dbd2);
+  white-space: nowrap;
+}
+
+.table td {
+  font-size: 12px;
+  color: var(--text-dark);
+  padding: 10px 12px;
+  border-bottom: 0.5px solid var(--cream);
+  vertical-align: middle;
+}
+
+.table tr:last-child td { border-bottom: none; }
+.table tbody tr:hover td { background: #fafaf8; }
+
+.agentCell { display: flex; align-items: center; gap: 9px; }
+
+.avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #d6edd9;
+  display: grid;
+  place-items: center;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--green-dark);
+  flex-shrink: 0;
+}
+
+.avatarInactif { background: #e8e8e8; color: var(--text-muted); }
+
+.agentNom { font-weight: 500; }
+
+.pseudo { color: var(--text-muted); font-size: 11px; }
+
+.roleBadge {
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+.roleAdmin {
+  background: #eef2ff;
+  color: #3730a3;
+}
+
+.roleAgent {
+  background: #f0f9f1;
+  color: var(--green-dark);
+}
+
+.countBadge {
+  display: inline-block;
+  background: var(--cream);
+  border: 0.5px solid var(--border, #e0dbd2);
+  border-radius: 20px;
+  padding: 2px 10px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.statutCell { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+
+.statutDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dotActif   { background: #1D9E75; }
+.dotInactif { background: #cbd5e0; }
+
+.actions { display: flex; gap: 6px; }
+
+.emptyRow {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 12px;
+  padding: 32px !important;
+}
+
+/* Modal */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal {
+  background: var(--white);
+  border-radius: 10px;
+  padding: 20px;
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modalTitle {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-dark);
+  padding-bottom: 10px;
+  border-bottom: 0.5px solid var(--border, #e0dbd2);
+}
+
+.modalActions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  padding-top: 8px;
+  border-top: 0.5px solid var(--border, #e0dbd2);
+}
+
+.fgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.fgroup { display: flex; flex-direction: column; gap: 5px; }
+
+.flabel {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.finput, .fselect {
+  border: 0.5px solid var(--border, #e0dbd2);
+  border-radius: 6px;
+  padding: 7px 10px;
+  font-size: 12px;
+  color: var(--text-dark);
+  background: var(--white);
+  font-family: inherit;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.15s ease;
+}
+
+.finput:focus, .fselect:focus { border-color: var(--green-dark); }

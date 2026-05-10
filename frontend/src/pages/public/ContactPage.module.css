@@ -1,0 +1,6 @@
+/* src/pages/public/ContactPage.module.css */
+
+.page {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--white, #ffffff);
+}

@@ -35,12 +35,10 @@ class CommandeController extends Controller
             });
         }
 
-        // Agent ne voit que ses commandes
-        if ($request->user()->isAgent()) {
-            $query->where('agent_id', $request->user()->id);
-        }
 
-        return response()->json($query->paginate(20));
+        $perPage = min((int) $request->get('per_page', 20), 100);
+
+        return response()->json($query->paginate($perPage));
     }
 
     // GET /api/commandes/{id}
@@ -141,6 +139,14 @@ class CommandeController extends Controller
         DB::transaction(function () use ($data, $request, $commande) {
             $commande->update(collect($data)->except('lignes')->toArray());
 
+            HistoriqueCommande::create([
+                'commande_id'   => $commande->id,
+                'agent_id'      => $request->user()->id,
+                'ancien_statut' => $commande->statut,
+                'nouveau_statut'=> $commande->statut,
+                'commentaire'   => 'Commande modifiée par ' . $request->user()->nom_complet . '.',
+            ]);
+
             if (isset($data['lignes'])) {
                 // Supprimer les lignes retirées
                 $idsGardes = collect($data['lignes'])->pluck('id')->filter()->toArray();
@@ -211,11 +217,10 @@ class CommandeController extends Controller
 
     // ── Helpers ────────────────────────────────────────────
 
+    // APRÈS
     private function authorizeCommande(Request $request, Commande $commande): void
     {
-        if ($request->user()->isAgent() && $commande->agent_id !== $request->user()->id) {
-            abort(403, 'Accès refusé.');
-        }
+        // Toutes les commandes sont visibles et modifiables par tous les utilisateurs authentifiés
     }
 
     private function genererReference(string $service): string
