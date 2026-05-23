@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\VersementController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\TransactionController;
 use App\Http\Controllers\Api\DocumentController;
+use App\Http\Controllers\Api\StatistiquesController;
 use Illuminate\Support\Facades\Route;
 
 // Auth — sans middleware
@@ -30,6 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('commandes/{commande}/versements', [VersementController::class, 'index']);
     Route::post('commandes/{commande}/versements', [VersementController::class, 'store']);
     Route::delete('commandes/{commande}/versements/{versement}', [VersementController::class, 'destroy']);
+    Route::put('/commandes/{commande}/versements/{versement}', [VersementController::class, 'update']);
 
     // Agents (uniquement pour ADMIN)
     Route::get('agents', [UserController::class, 'index']);
@@ -43,6 +45,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('transactions',            [TransactionController::class, 'store']);
     Route::patch('transactions/{transaction}/valider', [TransactionController::class, 'valider']);
     Route::delete('transactions/{transaction}',        [TransactionController::class, 'destroy']);
+
+    // Statistiques
+    Route::get('/statistiques/annuelles', [StatistiquesController::class, 'annuelles']);
 
     // Documents liés à une commande
     Route::prefix('commandes/{commande}')->group(function () {

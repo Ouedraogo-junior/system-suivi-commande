@@ -8,36 +8,22 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'DejaVu Sans', sans-serif; font-size: 8pt; color: #1a1a1a; }
 
-  @page {
-    margin: 10mm 12mm 22mm 12mm;
-  }
-
-  /* ── FOOTER FIXE ── */
-  .page-footer {
-    position: fixed;
-    bottom: -18mm;
-    left: 0; right: 0;
-    background: #1a5c2a;
-    color: #fff;
+  /* ── HEADER LOGO ── */
+  /* .logo-wrap {
+    width: 100%;
     text-align: center;
-    padding: 4px 8px;
-    font-size: 6.5pt;
-    line-height: 1.5;
-    border-top: 2px solid #c8a84b;
-  }
-  .page-footer span { color: #c8a84b; }
-  .page-num::after   { content: counter(page); }
-  .page-total::after { content: counter(pages); }
+    border-bottom: 2px solid #1a5c2a;
+    padding-bottom: 6px;
+    margin-bottom: 8px;
+  } */
+  .logo-wrap img { width: 100%; max-height: 60px; object-fit: contain; }
+  .logo-fallback { font-size: 13pt; font-weight: bold; color: #1a5c2a; letter-spacing: 2px; }
+  .logo-fallback-sub { font-size: 6pt; color: #888; }
 
-  /* ── HEADER ── */
-  .hdr-table { width: 100%; border-bottom: 2px solid #1a5c2a; padding-bottom: 6px; margin-bottom: 8px; }
-  .logo-text  { font-size: 13pt; font-weight: bold; color: #1a5c2a; letter-spacing: 2px; }
-  .logo-sub   { font-size: 6pt; color: #888; }
-  .hdr-info   { text-align: right; font-size: 6.5pt; color: #444; line-height: 1.6; }
-  .hdr-info strong { color: #1a5c2a; }
-
+  /* ── TITRE ── */
   .titre-bar { width: 100%; background: #1a5c2a; margin-bottom: 8px; }
 
+  /* ── META ── */
   .meta-table { width: 100%; margin-bottom: 8px; }
   .bloc-label {
     font-size: 6.5pt; font-weight: bold; color: #1a5c2a;
@@ -67,10 +53,11 @@
   /* ── CALCULS ── */
   .calc-tbl { width: 46%; border-collapse: collapse; margin-left: auto; margin-bottom: 8px; }
   .calc-tbl td { padding: 3px 8px; font-size: 7.5pt; border-bottom: 1px solid #eee; }
-  .calc-tbl td.lbl { color: #ffffff; }
+  .calc-tbl td.lbl { color: #1a5c2a; }
   .calc-tbl td.val { text-align: right; font-weight: bold; }
   .r-ttc td { background: #1a5c2a; color: #fff; font-size: 9pt; font-weight: bold; padding: 5px 8px; border: none; }
   .r-ttc td.val { color: #c8a84b; }
+  .r-ttc td.lbl { color: #ffffff; }
 
   /* ── VERSEMENTS ── */
   .section-lbl {
@@ -105,55 +92,30 @@
   .r-solde-ok td.val { color: #1a5c2a; font-size: 9pt; }
 
   /* ── SIGNATURES ── */
-  .sig-tbl { width: 100%; margin-top: 14px; }
-  .sig-label { font-size: 7pt; font-weight: bold; color: #1a5c2a; text-transform: uppercase; display: block; margin-bottom: 2px; }
-  .sig-name  { font-size: 7.5pt; color: #333; display: block; margin-bottom: 24px; }
-  .sig-line  { border-top: 1px solid #bbb; padding-top: 2px; font-size: 6.5pt; color: #999; width: 110px; display: block; }
+  .sig-tbl { width: 100%; margin-top: 350px; }
 </style>
 </head>
 <body>
+<div>
 
-  <!-- FOOTER FIXE -->
-  <div class="page-footer">
-    Adresse : Rue du 17 Octobre, Bld Muammar Kaddafi, 11 BP 268 OUAGA 11, Ouaga 2000, Burkina Faso
-    &nbsp;|&nbsp; Tél : (+226) 55 08 86 36 / 70 51 13 84
-    &nbsp;|&nbsp; <span>sogecop.sarl.bf@gmail.com</span>
-    &nbsp;|&nbsp; RCCM : BF-OUA-01-2023-B12-04313 | IFU : 00200104U
-    &nbsp;|&nbsp; Page <span class="page-num"></span> / <span class="page-total"></span>
-  </div>
-
-<div style="padding: 8mm 12mm 22mm 12mm;">
-
-  <!-- HEADER -->
-  <table class="hdr-table" cellpadding="0" cellspacing="0">
-    <tr>
-      <td style="width:55%; vertical-align:middle;">
-        @if(file_exists(public_path('images/logo_sogecop.png')))
-          <img src="{{ public_path('images/logo_sogecop.png') }}" alt="SOGECOP" style="width:110px;">
-        @else
-          <div class="logo-text">SOGECOP</div>
-          <div class="logo-sub">Société Générale de Commerce et de Prestations</div>
-        @endif
-      </td>
-      <td style="width:45%; vertical-align:middle;">
-        <div class="hdr-info">
-          <strong>SOGECOP Sarl</strong><br>
-          Rue du 17 Octobre, Bld Muammar Kaddafi<br>
-          11 BP 268 OUAGA 11, Ouaga 2000 — Burkina Faso<br>
-          Tél : (+226) 55 08 86 36 / 70 51 13 84<br>
-          sogecop.sarl.bf@gmail.com | RCCM : BF-OUA-01-2023-B12-04313
-        </div>
-      </td>
-    </tr>
-  </table>
+  <!-- HEADER LOGO -->
+  {{-- <div class="logo-wrap">
+    @if(file_exists(public_path('images/logo.png')))
+      <img src="{{ public_path('images/logo.png') }}" alt="SOGECOP">
+    @else
+      <div class="logo-fallback">SOGECOP</div>
+      <div class="logo-fallback-sub">Société Générale de Commerce et de Prestations</div>
+    @endif
+  </div> --}}
 
   <!-- TITRE -->
   <table class="titre-bar" cellpadding="0" cellspacing="0">
     <tr>
       <td style="text-align:center; padding:6px 0 4px;">
-        <span style="font-size:12pt; font-weight:bold; letter-spacing:2px; color:#fff;">FACTURE DÉFINITIVE</span><br>
+        <span style="font-size:12pt; font-weight:bold; letter-spacing:2px; color:#fff;">FACTURE DÉFINITIVE {{ $reference }}</span><br>
         <span style="color:#c8a84b; font-size:7pt;">
-          {{ $reference }} &nbsp;|&nbsp; Émis le {{ now()->locale('fr')->isoFormat('D MMMM YYYY') }}
+          {{-- {{ $reference }} &nbsp;|&nbsp;  --}}
+          Émis le {{ now()->locale('fr')->isoFormat('D MMMM YYYY') }}
         </span>
       </td>
     </tr>
@@ -163,7 +125,7 @@
   <table class="meta-table" cellpadding="0" cellspacing="0">
     <tr>
       <td style="width:50%; vertical-align:top; padding-right:16px;">
-        <span class="bloc-label">Destinataire</span>
+        <span class="bloc-label">DOIT</span>
         <div class="bloc-val">
           <strong>{{ $commande->client->nom_complet }}</strong><br>
           @if($commande->client->organisation){{ $commande->client->organisation }}<br>@endif
@@ -177,7 +139,10 @@
           Réf. commande : <strong>{{ $commande->reference }}</strong><br>
           Service : <strong>{{ ucfirst(strtolower($commande->service)) }}</strong><br>
           @if(!empty($commande->agent))
-            Agent : {{ $commande->agent->nom_complet ?? '' }} <br>
+            Agent : {{ $commande->agent->nom_complet ?? '' }}<br>
+          @endif
+          @if($commande->date_echeance)
+            Échéance : <strong>{{ \Carbon\Carbon::parse($commande->date_echeance)->locale('fr')->isoFormat('D MMM YYYY') }}</strong><br>
           @endif
           Statut :
           @if($commande->statut_paiement === 'PAYE')
@@ -232,10 +197,12 @@
       <td class="lbl">Montant net HT</td>
       <td class="val">{{ number_format($calculs['montant_net_ht'], 0, ',', ' ') }} F</td>
     </tr>
+    @if($calculs['tva_applicable'])
     <tr>
       <td class="lbl">TVA ({{ $calculs['tva_taux'] }}%)</td>
       <td class="val">{{ number_format($calculs['tva_montant'], 0, ',', ' ') }} F</td>
     </tr>
+    @endif
     <tr class="r-ttc">
       <td class="lbl">TOTAL TTC</td>
       <td class="val">{{ number_format($calculs['total_ttc'], 0, ',', ' ') }} F CFA</td>
@@ -308,19 +275,21 @@
   <!-- SIGNATURES -->
   <table class="sig-tbl" cellpadding="0" cellspacing="0">
     <tr>
-      <td style="width:50%; text-align:center;">
-        <span class="sig-label">Le client</span>
-        <span class="sig-name">{{ $commande->client->nom_complet }}</span>
-        <span class="sig-line">Signature &amp; cachet</span>
+      <td style="width:50%; text-align:center; vertical-align:bottom;">
+        <table style="width:100%;" cellpadding="0" cellspacing="0">
+          <tr><td style="text-align:center; font-size:7pt; font-weight:bold; color:#1a5c2a; text-transform:uppercase; padding-bottom:4px;">Le client</td></tr>
+          <tr><td style="text-align:center; font-size:7.5pt; color:#333; height:40px; vertical-align:bottom;">{{ $commande->client->nom_complet }}</td></tr>
+        </table>
       </td>
-      <td style="width:50%; text-align:center;">
-        <span class="sig-label">Le responsable</span>
-        <span class="sig-name">
-          @if(!empty($commande->agent))
-            {{ $commande->agent->prenom ?? '' }} {{ $commande->agent->nom ?? '' }}
-          @endif
-        </span>
-        <span class="sig-line">Signature &amp; cachet</span>
+      <td style="width:50%; text-align:center; vertical-align:bottom;">
+        <table style="width:100%;" cellpadding="0" cellspacing="0">
+          <tr><td style="text-align:center; font-size:7pt; font-weight:bold; color:#1a5c2a; text-transform:uppercase; padding-bottom:4px;">Le responsable</td></tr>
+          <tr><td style="text-align:center; font-size:7.5pt; color:#333; height:40px; vertical-align:bottom;">
+            @if(!empty($commande->agent))
+              {{ $commande->agent->prenom ?? '' }} {{ $commande->agent->nom ?? '' }}
+            @endif
+          </td></tr>
+        </table>
       </td>
     </tr>
   </table>

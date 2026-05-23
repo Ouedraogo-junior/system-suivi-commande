@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Commande;
 use App\Models\Document;
-use Barryvdh\DomPDF\Facade\Pdf;
+use Mpdf\Mpdf;
+use Mpdf\Config\ConfigVariables;
+use Mpdf\Config\FontVariables;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -37,6 +39,9 @@ class DocumentController extends Controller
             'delai_livraison'  => 'nullable|string|max:100',
             'acompte_taux'     => 'nullable|numeric|min:0|max:100',
             'acompte_montant'  => 'nullable|numeric|min:0',
+            'conditions'       => 'nullable|string|max:2000',  
+            'validite'         => 'nullable|string|max:100',   
+
         ]);
 
         $commande->load(['client', 'lignes', 'agent']);
@@ -67,21 +72,38 @@ class DocumentController extends Controller
         }
 
         // Générer PDF
-        $pdf = Pdf::loadView('documents.proforma', [
+        $html = view('documents.proforma', [
             'commande'  => $commande,
             'calculs'   => $calculs,
             'reference' => $reference,
             'delai'     => $data['delai_livraison'] ?? null,
+            'conditions' => $data['conditions'] ?? null,
+            'validite' => $data['validite'] ?? null,
             'document'  => $document,
-        ])->setPaper('a4', 'portrait');
+        ])->render();
 
-        // Sauvegarder
+        $mpdf = new Mpdf([
+            'mode'              => 'utf-8',
+            'format'            => 'A4',
+            'margin_top'        => 30,
+            'margin_bottom'     => 20,
+            'margin_left'       => 12,
+            'margin_right'      => 12,
+            'margin_header'     => 5,
+            'margin_footer'     => 5,
+        ]);
+
+        $mpdf->SetHTMLHeader($this->buildHeader($commande));
+        $mpdf->SetHTMLFooter($this->buildFooter());
+        $mpdf->WriteHTML($html);
+
         $chemin = "documents/{$reference}.pdf";
-        Storage::put($chemin, $pdf->output());
-
+        Storage::put($chemin, $mpdf->Output('', 'S'));
         $document->update(['chemin_fichier' => $chemin]);
 
-        return $pdf->stream("{$reference}.pdf");
+        return response($mpdf->Output('', 'S'), 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', "inline; filename=\"{$reference}.pdf\"");
     }
 
     /**
@@ -100,10 +122,8 @@ class DocumentController extends Controller
 
         $calculs = $this->calculer($commande, $data);
 
-        $reference = $this->genererReferenceDocument($commande, 'FACTURE');
-
         $existant = Document::where('commande_id', $commande->id)
-            ->where('type', 'FACTURE') // ou 'PRO_FORMA'
+            ->where('type', 'FACTURE')
             ->first();
 
         if (!$existant) {
@@ -120,20 +140,37 @@ class DocumentController extends Controller
             $reference = $existant->reference;
         }
 
-        $pdf = Pdf::loadView('documents.facture', [
+        $html = view('documents.facture', [
             'commande'  => $commande,
             'calculs'   => $calculs,
             'reference' => $reference,
             'document'  => $document,
-        ])->setPaper('a4', 'portrait');
+        ])->render();
+
+        $mpdf = new Mpdf([
+            'mode'              => 'utf-8',
+            'format'            => 'A4',
+            'margin_top'        => 30,
+            'margin_bottom'     => 20,
+            'margin_left'       => 12,
+            'margin_right'      => 12,
+            'margin_header'     => 5,
+            'margin_footer'     => 5,
+        ]);
+
+        $mpdf->SetHTMLHeader($this->buildHeader($commande));
+        $mpdf->SetHTMLFooter($this->buildFooter());
+        $mpdf->WriteHTML($html);
 
         $chemin = "documents/{$reference}.pdf";
-        Storage::put($chemin, $pdf->output());
-
+        Storage::put($chemin, $mpdf->Output('', 'S'));
         $document->update(['chemin_fichier' => $chemin]);
 
-        return $pdf->stream("{$reference}.pdf");
+        return response($mpdf->Output('', 'S'), 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', "inline; filename=\"{$reference}.pdf\"");
     }
+
 
     /**
      * GET /api/commandes/{id}/documents/{docId}/telecharger
@@ -158,17 +195,17 @@ class DocumentController extends Controller
 
     private function calculer(Commande $commande, array $data): array
     {
-        $montantBrut = $commande->lignes->sum('sous_total');
-
-        $remiseTaux   = $data['remise_taux'] ?? $commande->remise ?? 0;
+        $montantBrut   = $commande->lignes->sum('sous_total');
+        $remiseTaux    = $data['remise_taux'] ?? $commande->remise ?? 0;
         $montantRemise = $montantBrut * ($remiseTaux / 100);
         $montantNetHT  = $montantBrut - $montantRemise;
 
-        $tvaTaux    = 18;
+        // ── TVA : lire tva_applicable et tva_taux depuis la commande ──
+        $tvaTaux    = $commande->tva_applicable ? (float) ($commande->tva_taux ?? 18) : 0;
         $tvaMontant = $montantNetHT * ($tvaTaux / 100);
         $totalTTC   = $montantNetHT + $tvaMontant;
 
-        // Acompte (pro forma uniquement)
+        // Acompte
         $acompteMontant = 0;
         if (isset($data['acompte_montant']) && $data['acompte_montant'] > 0) {
             $acompteMontant = $data['acompte_montant'];
@@ -176,22 +213,22 @@ class DocumentController extends Controller
             $acompteMontant = $totalTTC * ($data['acompte_taux'] / 100);
         }
 
-        // Versements (facture)
-        $totalVerse   = $commande->versements ? $commande->versements->sum('montant') : 0;
+        $totalVerse   = $commande->versements?->sum('montant') ?? 0;
         $soldeRestant = $totalTTC - $totalVerse;
 
         return [
-            'montant_brut'    => $montantBrut,
-            'remise_taux'     => $remiseTaux,
-            'montant_remise'  => $montantRemise,
-            'montant_net_ht'  => $montantNetHT,
-            'tva_taux'        => $tvaTaux,
-            'tva_montant'     => $tvaMontant,
-            'total_ttc'       => $totalTTC,
-            'acompte_montant' => $acompteMontant,
-            'reste_a_payer'   => $totalTTC - $acompteMontant,
-            'total_verse'     => $totalVerse,
-            'solde_restant'   => $soldeRestant,
+            'montant_brut'      => $montantBrut,
+            'remise_taux'       => $remiseTaux,
+            'montant_remise'    => $montantRemise,
+            'montant_net_ht'    => $montantNetHT,
+            'tva_applicable'    => $commande->tva_applicable, // ← passer aux blades
+            'tva_taux'          => $tvaTaux,
+            'tva_montant'       => $tvaMontant,
+            'total_ttc'         => $totalTTC,
+            'acompte_montant'   => $acompteMontant,
+            'reste_a_payer'     => $totalTTC - $acompteMontant,
+            'total_verse'       => $totalVerse,
+            'solde_restant'     => $soldeRestant,
         ];
     }
 
@@ -230,5 +267,42 @@ class DocumentController extends Controller
         if ($request->user()->isAgent() && $commande->agent_id !== $request->user()->id) {
             abort(403, 'Accès refusé.');
         }
+    }
+
+    private function buildHeader(Commande $commande): string
+    {
+        $logoPath = public_path('images/logo_large.png');
+    
+        if (file_exists($logoPath)) {
+            $logoHtml = '<img src="' . $logoPath . '" style="width:300%; max-height:90px; object-fit:contain;">';
+        } else {
+            $logoHtml = '
+                <div style="font-size:13pt; font-weight:bold; color:#1a5c2a; letter-spacing:2px;">SOGECOP</div>
+                <div style="font-size:6pt; color:#888;">Société Générale de Commerce et de Prestations</div>';
+        }
+    
+        return '
+        <div style="
+            width: 300%;
+            text-align: center;
+            border-bottom: 2px solid #1a5c2a;
+            padding-bottom: 6px;
+            margin-bottom: 8px;
+        ">
+            ' . $logoHtml . '
+        </div>';
+    }
+
+
+    private function buildFooter(): string
+    {
+        return '
+        <div style="background:#1a5c2a; color:#fff; text-align:center; padding:4px 8px; font-size:6.5pt; line-height:1.5; border-top:2px solid #c8a84b;">
+        Adresse : Rue du 17 Octobre, Bld Muammar Kaddafi, 11 BP 268 OUAGA 11, Ouaga 2000, Burkina Faso
+        &nbsp;|&nbsp; Tél : (+226) 55 08 86 36 / 70 51 13 84
+        &nbsp;|&nbsp; <span style="color:#c8a84b;">sogecop.sarl.bf@gmail.com</span>
+        &nbsp;|&nbsp; RCCM : BF-OUA-01-2023-B12-04313 | IFU : 00200104U
+        &nbsp;|&nbsp; Page {PAGENO} / {nbpg}
+        </div>';
     }
 }

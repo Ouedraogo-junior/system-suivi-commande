@@ -12,7 +12,7 @@ class Commande extends Model
     protected $fillable = [
         'reference', 'client_id', 'agent_id', 'service', 'statut',
         'statut_paiement', 'montant_total', 'montant_paye', 'remise',
-        'tva_applicable', 'date_echeance', 'notes', 'synced_at',
+        'tva_applicable', 'date_echeance', 'notes', 'synced_at', 'tva_taux',
     ];
 
     protected $casts = [
@@ -22,6 +22,7 @@ class Commande extends Model
         'remise'         => 'decimal:2',
         'date_echeance'  => 'date',
         'synced_at'      => 'datetime',
+        'tva_taux' => 'decimal:2',
     ];
 
     // Relations
@@ -66,7 +67,7 @@ class Commande extends Model
         $sous_total = $this->lignes()->sum('sous_total');
         $apres_remise = $sous_total * (1 - $this->remise / 100);
         $this->montant_total = $this->tva_applicable
-            ? $apres_remise * 1.18
+            ? $apres_remise * (1 + $this->tva_taux / 100)
             : $apres_remise;
         $this->save();
     }
