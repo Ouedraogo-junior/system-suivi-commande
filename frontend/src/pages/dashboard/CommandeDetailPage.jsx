@@ -188,6 +188,66 @@ function ModalVersement({ onConfirm, onCancel, loading }) {
 }
 
 
+// ===== MODAL EDITION VERSEMENT =====
+function ModalVersementEdit({ versement, onConfirm, onCancel, loading }) {
+  const [form, setForm] = useState({
+    montant:   String(versement.montant),
+    reference: versement.reference ?? '',
+    notes:     versement.notes ?? '',
+  });
+
+  const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+
+  return (
+    <div className={styles.modalOverlay}>
+      <div className={styles.modal}>
+        <div className={styles.modalTitle}>Modifier le versement #{versement.numero_versement}</div>
+        <div className={styles.fgroup}>
+          <label className={styles.flabel}>Montant (FCFA) *</label>
+          <input
+            className={styles.finput}
+            type="number"
+            min="1"
+            value={form.montant}
+            onChange={e => set('montant', e.target.value)}
+          />
+        </div>
+        <div className={styles.fgroup}>
+          <label className={styles.flabel}>Référence</label>
+          <input
+            className={styles.finput}
+            type="text"
+            value={form.reference}
+            onChange={e => set('reference', e.target.value)}
+            placeholder="N° reçu, virement..."
+          />
+        </div>
+        <div className={styles.fgroup}>
+          <label className={styles.flabel}>Notes</label>
+          <textarea
+            className={styles.ftextarea}
+            value={form.notes}
+            onChange={e => set('notes', e.target.value)}
+            placeholder="Remarques éventuelles..."
+          />
+        </div>
+        <div className={styles.modalActions}>
+          <Button variant="ghost" size="sm" onClick={onCancel}>Annuler</Button>
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={() => onConfirm(form)}
+            disabled={loading || !form.montant}
+          >
+            {loading ? 'En cours...' : 'Enregistrer'}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
 // ===== MODAL EDITION LIGNES =====
 function ModalEditionLignes({ commande, onConfirm, onCancel, loading }) {
   const [lignes, setLignes] = useState(
@@ -211,7 +271,7 @@ function ModalEditionLignes({ commande, onConfirm, onCancel, loading }) {
   const brut = lignes.reduce((s, l) => s + (Number(l.quantite) * Number(l.prix_unitaire)), 0);
   const remise = brut * (commande.remise / 100);
   const netHT  = brut - remise;
-  const tva    = commande.tva_applicable ? netHT * 0.18 : 0;
+  const tva = commande.tva_applicable ? netHT * ((commande.tva_taux ?? 18) / 100) : 0;
   const total  = netHT + tva;
 
   const valide = lignes.length > 0 && lignes.every(
@@ -299,7 +359,7 @@ function ModalEditionLignes({ commande, onConfirm, onCancel, loading }) {
           )}
           {commande.tva_applicable && (
             <div className={styles.editRecapRow}>
-              <span>TVA (18%)</span>
+              <span>TVA ({commande.tva_taux ?? 18}%)</span>
               <span>+ {formatMontant(tva)}</span>
             </div>
           )}
@@ -332,6 +392,7 @@ export default function CommandeDetailPage() {
   const location = useLocation();
   const basePath = location.pathname.startsWith('/admin') ? '/admin' : '/dashboard';
   const [modalDoc, setModalDoc] = useState(null); // 'PRO_FORMA' | 'FACTURE' | null
+  const [modalEditVers, setModalEditVers] = useState(null); // versement en cours d'édition
 
 
   const [commande, setCommande]         = useState(null);
@@ -377,6 +438,32 @@ export default function CommandeDetailPage() {
       await fetchCommande();
     } catch (e) {
       alert(e.response?.data?.message ?? 'Erreur lors de l\'enregistrement.');
+    } finally {
+      setActionLoad(false);
+    }
+  };
+
+  const handleEditVersement = async (payload) => {
+    setActionLoad(true);
+    try {
+      await api.put(`/commandes/${id}/versements/${modalEditVers.id}`, payload);
+      setModalEditVers(null);
+      await fetchCommande();
+    } catch (e) {
+      alert(e.response?.data?.message ?? 'Erreur lors de la modification.');
+    } finally {
+      setActionLoad(false);
+    }
+  };
+
+  const handleSupprimerVersement = async (versementId) => {
+    if (!confirm('Supprimer ce versement ?')) return;
+    setActionLoad(true);
+    try {
+      await api.delete(`/commandes/${id}/versements/${versementId}`);
+      await fetchCommande();
+    } catch (e) {
+      alert(e.response?.data?.message ?? 'Erreur lors de la suppression.');
     } finally {
       setActionLoad(false);
     }
@@ -488,7 +575,7 @@ export default function CommandeDetailPage() {
               <InfoField label="Agent"      value={commande.agent?.nom_complet} />
               <InfoField label="Échéance"   value={formatDate(commande.date_echeance)} />
               <InfoField label="Remise"     value={commande.remise > 0 ? `${commande.remise}%` : 'Aucune'} />
-              <InfoField label="TVA"        value={commande.tva_applicable ? 'Applicable (18%)' : 'Non applicable'} />
+              <InfoField label="TVA" value={commande.tva_applicable ? `Applicable (${commande.tva_taux ?? 18}%)` : 'Non applicable'} />
               <InfoField label="Créée le"   value={formatDate(commande.created_at)} />
             </div>
             {commande.notes && (
@@ -596,11 +683,11 @@ export default function CommandeDetailPage() {
                   )}
                   {commande.tva_applicable && (
                     <tr className={styles.tfootRow}>
-                      <td colSpan={3}>TVA (18%)</td>
+                      <td colSpan={3}>TVA ({commande.tva_taux ?? 18}%)</td>
                       <td>
                         + {formatMontant(
                           commande.lignes?.reduce((s, l) => s + Number(l.sous_total), 0)
-                          * (1 - commande.remise / 100) * 0.18
+                          * (1 - commande.remise / 100) * ((commande.tva_taux ?? 18) / 100)
                         )}
                       </td>
                     </tr>
@@ -635,6 +722,7 @@ export default function CommandeDetailPage() {
                       <th>Référence</th>
                       <th>Agent</th>
                       <th>Montant</th>
+                      <th></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -645,13 +733,26 @@ export default function CommandeDetailPage() {
                         <td>{v.reference ?? '—'}</td>
                         <td>{v.agent?.nom_complet ?? '—'}</td>
                         <td className={styles.sousTotal}>{formatMontant(v.montant)}</td>
+                        <td className={styles.versActions}>
+                          <button
+                            className={styles.btnVersEdit}
+                            title="Modifier"
+                            onClick={() => setModalEditVers(v)}
+                          >✏️</button>
+                          <button
+                            className={styles.btnVersDelete}
+                            title="Supprimer"
+                            onClick={() => handleSupprimerVersement(v.id)}
+                          >🗑</button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
                   <tfoot>
                     <tr className={styles.tfootTotal}>
-                      <td colSpan={3}>Total payé</td>
+                      <td colSpan={4}>Total payé</td>
                       <td>{formatMontant(commande.montant_paye)}</td>
+                      <td></td>
                     </tr>
                   </tfoot>
                 </table>
@@ -677,6 +778,15 @@ export default function CommandeDetailPage() {
         <ModalVersement
           onConfirm={handleVersement}
           onCancel={() => setModalVers(false)}
+          loading={actionLoading}
+        />
+      )}
+
+      {modalEditVers && (
+        <ModalVersementEdit
+          versement={modalEditVers}
+          onConfirm={handleEditVersement}
+          onCancel={() => setModalEditVers(null)}
           loading={actionLoading}
         />
       )}

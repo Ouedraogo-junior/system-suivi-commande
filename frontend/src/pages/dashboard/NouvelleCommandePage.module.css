@@ -16,7 +16,7 @@
   background: var(--white);
   border: 0.5px solid var(--border, #e0dbd2);
   border-radius: 10px;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .cardHead {
@@ -26,6 +26,7 @@
   color: var(--text-dark);
   background: var(--cream);
   border-bottom: 0.5px solid var(--border, #e0dbd2);
+  border-radius: 10px 10px 0 0;
 }
 
 .cardBody {

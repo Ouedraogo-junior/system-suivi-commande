@@ -47,6 +47,21 @@
   font-size: 18px;
   font-weight: 600;
   color: var(--text-dark);
+  margin-bottom: 8px;
+}
+
+/* Ventilation entrées manuelles / paiements clients */
+.ventilation {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-top: 8px;
+  border-top: 0.5px solid var(--border, #e0dbd2);
+}
+
+.ventilation span {
+  font-size: 10px;
+  color: var(--text-muted);
 }
 
 /* Grille */

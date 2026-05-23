@@ -433,3 +433,28 @@
   padding-top: 5px;
   margin-top: 3px;
 }
+
+.versActions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.btnVersEdit,
+.btnVersDelete {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  line-height: 1;
+  opacity: 0.7;
+  transition: opacity 0.15s;
+}
+
+.btnVersEdit:hover,
+.btnVersDelete:hover {
+  opacity: 1;
+  background: var(--cream);
+}

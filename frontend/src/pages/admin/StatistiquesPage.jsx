@@ -10,8 +10,11 @@ function formatMontant(v) {
 const ANNEES = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i);
 
 // ===== GRAPHIQUE BARRES =====
-function BarChart({ data, keyEntree, keySortie }) {
-  const max = Math.max(...data.map(d => Math.max(d[keyEntree] || 0, d[keySortie] || 0)), 1);
+function BarChart({ data }) {
+  const max = Math.max(
+    ...data.map(d => Math.max(d.entrees || 0, d.sorties || 0)),
+    1
+  );
 
   return (
     <div className={styles.barChart}>
@@ -20,13 +23,13 @@ function BarChart({ data, keyEntree, keySortie }) {
           <div className={styles.barPair}>
             <div
               className={`${styles.bar} ${styles.barEntree}`}
-              style={{ height: `${Math.round((d[keyEntree] / max) * 100)}px` }}
-              title={formatMontant(d[keyEntree])}
+              style={{ height: `${Math.round((d.entrees / max) * 100)}px` }}
+              title={formatMontant(d.entrees)}
             />
             <div
               className={`${styles.bar} ${styles.barSortie}`}
-              style={{ height: `${Math.round((d[keySortie] / max) * 100)}px` }}
-              title={formatMontant(d[keySortie])}
+              style={{ height: `${Math.round((d.sorties / max) * 100)}px` }}
+              title={formatMontant(d.sorties)}
             />
           </div>
           <span className={styles.barLabel}>{d.mois}</span>
@@ -42,63 +45,45 @@ function BarChart({ data, keyEntree, keySortie }) {
 
 // ===== PAGE =====
 export default function StatistiquesPage() {
-  const [annee, setAnnee]       = useState(new Date().getFullYear());
-  const [stats, setStats]       = useState(null);
-  const [commandes, setCmd]     = useState(null);
-  const [loading, setLoading]   = useState(true);
+  const [annee, setAnnee]     = useState(new Date().getFullYear());
+  const [stats, setStats]     = useState(null);
+  const [commandes, setCmd]   = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetch = async () => {
+    const fetchData = async () => {
       setLoading(true);
       try {
-        // Stats financières 12 mois
-        const evolution12 = await Promise.all(
-          Array.from({ length: 12 }, (_, i) =>
-            api.get('/transactions/stats', { params: { mois: i + 1, annee } })
-          )
-        );
+        const { data } = await api.get('/statistiques/annuelles', { params: { annee } });
 
-        const parMois = evolution12.map((r, i) => ({
-          mois:    r.data.evolution?.at(-1)?.mois ?? `M${i + 1}`,
-          entrees: r.data.entrees,
-          sorties: r.data.sorties,
-          solde:   r.data.solde,
-        }));
-
-        const totalEntrees = parMois.reduce((s, m) => s + m.entrees, 0);
-        const totalSorties = parMois.reduce((s, m) => s + m.sorties, 0);
-
-        // Stats commandes
-        const [total, termine, annule, nonPaye, partiel] = await Promise.all([
-          api.get('/commandes', { params: { per_page: 1 } }),
-          api.get('/commandes', { params: { statut: 'TERMINE',          per_page: 1 } }),
-          api.get('/commandes', { params: { statut: 'ANNULE',           per_page: 1 } }),
-          api.get('/commandes', { params: { statut_paiement: 'NON_PAYE', per_page: 1 } }),
-          api.get('/commandes', { params: { statut_paiement: 'PARTIEL',  per_page: 1 } }),
-        ]);
-
-        setStats({ parMois, totalEntrees, totalSorties, totalSolde: totalEntrees - totalSorties });
-        setCmd({
-          total:    total.data.meta?.total    ?? 0,
-          termine:  termine.data.meta?.total  ?? 0,
-          annule:   annule.data.meta?.total   ?? 0,
-          nonPaye:  nonPaye.data.meta?.total  ?? 0,
-          partiel:  partiel.data.meta?.total  ?? 0,
+        setStats({
+          parMois:                data.parMois,
+          totalEntrees:           data.totalEntrees,
+          totalSorties:           data.totalSorties,
+          totalSolde:             data.totalSolde,
+          totalEntreesManuelles:  data.totalEntreesManuelles,
+          totalEntreesVersements: data.totalEntreesVersements,
         });
+
+        setCmd(data.commandes);
       } finally {
         setLoading(false);
       }
     };
-    fetch();
+    fetchData();
   }, [annee]);
+
 
   return (
     <AppLayout
       title="Statistiques"
       subtitle="Vue annuelle"
       topbarActions={
-        <select className={styles.anneeSelect} value={annee}
-          onChange={e => setAnnee(Number(e.target.value))}>
+        <select
+          className={styles.anneeSelect}
+          value={annee}
+          onChange={e => setAnnee(Number(e.target.value))}
+        >
           {ANNEES.map(a => <option key={a} value={a}>{a}</option>)}
         </select>
       }
@@ -112,6 +97,11 @@ export default function StatistiquesPage() {
             <div className={`${styles.resumeCard} ${styles.cardEntree}`}>
               <div className={styles.resumeLabel}>Total entrées {annee}</div>
               <div className={styles.resumeValue}>{formatMontant(stats.totalEntrees)}</div>
+              {/* Ventilation entrées */}
+              <div className={styles.ventilation}>
+                <span>Paiements clients : {formatMontant(stats.totalEntreesVersements)}</span>
+                <span>Entrées manuelles : {formatMontant(stats.totalEntreesManuelles)}</span>
+              </div>
             </div>
             <div className={`${styles.resumeCard} ${styles.cardSortie}`}>
               <div className={styles.resumeLabel}>Total sorties {annee}</div>
@@ -130,11 +120,7 @@ export default function StatistiquesPage() {
             <div className={styles.card}>
               <div className={styles.cardHead}>Évolution mensuelle {annee}</div>
               <div className={styles.cardBody}>
-                <BarChart
-                  data={stats.parMois}
-                  keyEntree="entrees"
-                  keySortie="sorties"
-                />
+                <BarChart data={stats.parMois} />
               </div>
             </div>
 
@@ -187,7 +173,8 @@ export default function StatistiquesPage() {
                     <thead>
                       <tr>
                         <th>Mois</th>
-                        <th>Entrées</th>
+                        <th>Paiements clients</th>
+                        <th>Entrées manuelles</th>
                         <th>Sorties</th>
                         <th>Solde</th>
                       </tr>
@@ -196,7 +183,8 @@ export default function StatistiquesPage() {
                       {stats.parMois.map((m, i) => (
                         <tr key={i}>
                           <td className={styles.moisCell}>{m.mois}</td>
-                          <td className={styles.vGreen}>{formatMontant(m.entrees)}</td>
+                          <td className={styles.vGreen}>{formatMontant(m.entreesVersements)}</td>
+                          <td className={styles.vGreen}>{formatMontant(m.entreesManuelles)}</td>
                           <td className={styles.vRed}>{formatMontant(m.sorties)}</td>
                           <td className={m.solde >= 0 ? styles.vGreen : styles.vRed}>
                             {m.solde >= 0 ? '+' : ''}{formatMontant(m.solde)}

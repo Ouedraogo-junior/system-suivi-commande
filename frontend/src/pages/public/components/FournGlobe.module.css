@@ -1,0 +1,90 @@
+/* src/pages/public/components/FournGlobe.module.css */
+
+/* ══════════════════════════════════════════════════════════════
+   WRAPPER
+══════════════════════════════════════════════════════════════ */
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  user-select: none;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   CANVAS
+══════════════════════════════════════════════════════════════ */
+.canvas {
+  cursor: grab;
+  display: block;
+  /* Ombre douce pour que le globe « flotte » */
+  filter: drop-shadow(0 8px 28px rgba(26, 92, 42, 0.18))
+          drop-shadow(0 2px 6px rgba(0, 0, 0, 0.12));
+  /* Entrée en fondu au montage */
+  animation: globeIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  /* Responsive : ne dépasse pas la largeur de son conteneur */
+  max-width: 100%;
+  height: auto;
+}
+.canvas:active { cursor: grabbing; }
+
+@keyframes globeIn {
+  0%   { opacity: 0; transform: scale(0.88) translateY(12px); filter: blur(4px); }
+  100% { opacity: 1; transform: scale(1)    translateY(0);    filter: none; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TOOLTIP (région · pays)
+══════════════════════════════════════════════════════════════ */
+.tooltip {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--green-dark);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  height: 18px;
+  text-align: center;
+  transition: opacity 150ms ease;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   LÉGENDE
+══════════════════════════════════════════════════════════════ */
+.legend {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.legendDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.8);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   HINT
+══════════════════════════════════════════════════════════════ */
+.hint {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  color: var(--text-muted);
+  opacity: 0.55;
+  letter-spacing: 0.4px;
+  margin: 0;
+  text-align: center;
+}
