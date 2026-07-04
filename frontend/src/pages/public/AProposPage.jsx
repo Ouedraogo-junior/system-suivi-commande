@@ -9,10 +9,14 @@ import ReseauFournisseurs   from './components/apropos/ReseauFournisseurs';
 import EngagementAssociatif from './components/apropos/EngagementAssociatif';
 import { Link }             from 'react-router-dom';
 import styles               from './AProposPage.module.css';
+import { useScrollReveal } from '../../hooks/useScrollReveal';
+import './components/apropos/AProposPage.animations.css';
+
 
 export default function AProposPage() {
   const { lang } = useOutletContext();
   const t = APROPOS_CONTENT[lang];
+  useScrollReveal();
 
   return (
     <div className={styles.page}>
@@ -24,10 +28,10 @@ export default function AProposPage() {
       <ReseauFournisseurs   t={t} />
 
       {/* CTA */}
-      <section className={styles.cta}>
+      <section className={`${styles.cta} revealUp`} data-reveal>
         <h2 className={styles.ctaTitle}>{t.cta.title}</h2>
         <p  className={styles.ctaSub}>{t.cta.sub}</p>
-        <Link to="/public/contact" className={styles.ctaBtn}>{t.cta.btn}</Link>
+        <Link to="/contact" className={styles.ctaBtn}>{t.cta.btn}</Link>
       </section>
     </div>
   );

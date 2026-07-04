@@ -29,6 +29,7 @@ export default function NouvelleCommandePage() {
   // ── State commande ────────────────────────────────────────────────────────
   const [service,       setService]       = useState('IMPRIMERIE');
   const [remise,        setRemise]        = useState('');
+  const [remiseType,    setRemiseType]    = useState('PERCENT'); // 'PERCENT' | 'MONTANT'
   const [tva,           setTva]           = useState(false);
   const [tvaTaux,       setTvaTaux]       = useState(18);
   const [dateEcheance,  setDateEcheance]  = useState('');
@@ -60,11 +61,21 @@ export default function NouvelleCommandePage() {
     setLignes(ls => ls.filter(l => l._key !== key));
   };
 
+  // ── Remise ────────────────────────────────────────────────────────────────
+  const handleRemiseTypeChange = (type) => {
+    setRemiseType(type);
+    setRemise(''); // évite qu'un % soit interprété comme un montant ou l'inverse
+  };
+
   // ── Calculs ───────────────────────────────────────────────────────────────
-  const sousTotal    = lignes.reduce((s, l) => s + calcSousTotal(l), 0);
-  const apresRemise  = sousTotal * (1 - (parseFloat(remise) || 0) / 100);
-  const montantTVA   = tva ? apresRemise * (tvaTaux / 100) : 0;
-  const total        = apresRemise + montantTVA;
+  const sousTotal     = lignes.reduce((s, l) => s + calcSousTotal(l), 0);
+  const remiseValeur  = parseFloat(remise) || 0;
+  const montantRemise = remiseType === 'MONTANT'
+    ? Math.min(remiseValeur, sousTotal)
+    : sousTotal * (remiseValeur / 100);
+  const apresRemise   = sousTotal - montantRemise;
+  const montantTVA    = tva ? apresRemise * (tvaTaux / 100) : 0;
+  const total         = apresRemise + montantTVA;
 
   // ── Validation ────────────────────────────────────────────────────────────
   const valider = () => {
@@ -84,10 +95,15 @@ export default function NouvelleCommandePage() {
     if (!valider()) return;
     setLoading(true);
     try {
+      // Le backend attend toujours un pourcentage : on convertit le montant fixe avant l'envoi.
+      const remisePourcentage = remiseType === 'MONTANT'
+        ? (sousTotal > 0 ? (montantRemise / sousTotal) * 100 : 0)
+        : remiseValeur;
+
       const { data } = await api.post('/commandes', {
         client_id:      clientSelectionne.id,
         service,
-        remise:         parseFloat(remise) || 0,
+        remise:         remisePourcentage,
         tva_applicable: tva,
         tva_taux:       tva ? tvaTaux : 0,
         date_echeance:  dateEcheance || null,
@@ -103,7 +119,7 @@ export default function NouvelleCommandePage() {
       console.log('réponse API complète:', data);
       console.log('tva_applicable:', data.tva_applicable);
       console.log('tva_taux:', data.tva_taux);
-      
+
       setCommandeCree(data);
     } catch (e) {
       const msg = e.response?.data?.message ?? 'Erreur lors de la création.';
@@ -148,6 +164,7 @@ export default function NouvelleCommandePage() {
           <ParametresSection
             service={service}               onServiceChange={setService}
             remise={remise}                 onRemiseChange={setRemise}
+            remiseType={remiseType}         onRemiseTypeChange={handleRemiseTypeChange}
             tva={tva}                       onTvaChange={setTva}
             tvaTaux={tvaTaux}               onTvaTauxChange={setTvaTaux}
             dateEcheance={dateEcheance}     onDateEcheanceChange={setDateEcheance}
@@ -156,6 +173,8 @@ export default function NouvelleCommandePage() {
           <RecapitulatifSection
             sousTotal={sousTotal}
             remise={remise}
+            remiseType={remiseType}
+            montantRemise={montantRemise}
             tva={tva}
             tvaTaux={tvaTaux}
             montantTVA={montantTVA}

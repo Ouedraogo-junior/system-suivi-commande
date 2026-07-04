@@ -19,6 +19,7 @@ Route::prefix('auth')->group(function () {
 Route::middleware('auth:sanctum')->prefix('auth')->group(function () {
     Route::get('me', [AuthController::class, 'me']);
     Route::post('logout', [AuthController::class, 'logout']);
+    Route::put('me', [UserController::class, 'updateProfile']);
 });
 
 // Ressources protégées
@@ -54,6 +55,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('documents',                      [DocumentController::class, 'index']);
     Route::post('documents/proforma',            [DocumentController::class, 'proforma']);
     Route::post('documents/facture',             [DocumentController::class, 'facture']);
+    Route::post('documents/bon-livraison',            [DocumentController::class, 'bonLivraison']);
     Route::get('documents/{document}/telecharger',[DocumentController::class, 'telecharger']);
     });
 

@@ -1,5 +1,18 @@
 /* src/pages/public/components/apropos/AProposComponents.module.css */
 
+:root {
+  --green-dark:  #1a5c2a;
+  --green-mid:   #2d7a40;
+  --green-light: #4a9e60;
+  --brown:       #8B5E3C;
+  --gold:        #c9a84c;
+  --cream:       #f5f2ed;
+  --white:       #ffffff;
+  --text-dark:   #1a1a18;
+  --text-muted:  #5a5a52;
+}
+
+
 /* ── HELPERS ── */
 .sectionLabel {
   font-size: 11px;
@@ -20,7 +33,7 @@
 }
 
 .sectionBody {
-  font-size: 13px;
+  font-size: 15px;
   color: var(--text-muted, #5a5a52);
   line-height: 1.8;
   max-width: 560px;
@@ -49,9 +62,14 @@
 .heroInner { position: relative; z-index: 1; max-width: 720px; }
 
 .breadcrumb { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; }
-.breadcrumbLink { font-size: 12px; color: rgba(255,255,255,0.55); text-decoration: none; transition: color 0.15s; }
+.breadcrumbLink { font-size: 14px; color: rgba(255,255,255,0.55); text-decoration: none; transition: color 0.15s; }
 .breadcrumbLink:hover { color: rgba(255,255,255,0.85); }
-.breadcrumbSep { font-size: 12px; color: rgba(255,255,255,0.3); }
+.breadcrumbSep { font-size: 14px; color: rgba(255,255,255,0.3); }
+
+.breadcrumbCurrent {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 14px;
+}
 
 .heroLabel {
   font-size: 11px; text-transform: uppercase; letter-spacing: 1px;
@@ -65,8 +83,8 @@
 }
 
 .heroSub {
-  font-size: 14px; color: rgba(255,255,255,0.72);
-  line-height: 1.7; max-width: 560px;
+  font-size: 15px; color: rgba(255,255,255,0.72);
+  line-height: 1.7; max-width: 560px; font-weight: 500;
 }
 
 /* ── HISTOIRE ── */
@@ -81,7 +99,7 @@
 
 .histoireLeft {}
 
-.histoireRight { display: flex; flex-direction: column; gap: 16px; }
+.histoireRight { display: flex; flex-direction: column; gap: 16px; overflow: hidden; border-radius: 10px; }
 
 .chiffresGrid {
   display: grid;
@@ -122,7 +140,20 @@
   gap: 8px;
   background: var(--cream, #f5f2ed);
   color: var(--text-muted, #5a5a52);
-  font-size: 12px;
+  font-size: 14px;
+}
+
+.histoireImagesGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.histoireImg {
+  width: 100%;
+  border-radius: 10px;
+  object-fit: cover;
+  aspect-ratio: 4/3;
 }
 
 /* ── VALEURS ── */
@@ -162,9 +193,38 @@
 }
 
 .valeurBody {
-  font-size: 12.5px;
+  font-size: 14px;
   color: var(--text-muted, #5a5a52);
   line-height: 1.7;
+}
+
+.valeurBody {
+  font-size: 14px;
+  color: var(--text-muted, #5a5a52);
+  line-height: 1.7;
+}
+
+.valeurToggle {
+  display: inline-block;
+  margin-top: 8px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  color: #1a5c2a;
+  text-decoration: underline;
+  text-decoration-color: rgba(26, 92, 42, 0.4);
+  text-underline-offset: 3px;
+  letter-spacing: 0.2px;
+  transition: color 150ms ease, text-decoration-color 150ms ease;
+}
+
+.valeurToggle:hover {
+  color: #2d7a40;
+  text-decoration-color: rgba(45, 122, 64, 0.7);
 }
 
 /* ── PARTENAIRES ── */
@@ -175,35 +235,144 @@
 
 .partenairesHeader { margin-bottom: 28px; }
 
-.carouselWrap {}
+/* Carousel container */
+.partCarousel {
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+  max-width: 420px;   /* AJOUTÉ */
+  margin: 0 auto;      /* AJOUTÉ — centre le bloc */
+}
 
+/* Track glissant */
+.partTrack {
+  display: flex;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Une slide = 2 cellules côte à côte */
+.partSlide {
+  min-width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+/* Cellule individuelle */
+.partCell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 24px 16px;
+  min-height: 130px;
+  background: var(--cream, #f5f2ed);
+  border: 1px solid #e0dbd2;
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+
+/* Logo réel */
+.partLogo {
+  height: 60px;
+  width: 100%;
+  max-width: 140px;
+  object-fit: contain;
+  display: block;
+}
+
+.partName {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted, #5a5a52);
+  text-align: center;
+  line-height: 1.3;
+}
+
+/* Placeholder sans logo */
+.partPlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #b0aca4;
+}
+
+/* Flèches */
+.partArrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid #e0dbd2;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--green-dark, #1a5c2a);
+  z-index: 2;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  transition: background 0.15s, box-shadow 0.15s;
+  line-height: 1;
+}
+.partArrow:hover { background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
+.partArrowLeft  { left: 6px; }
+.partArrowRight { right: 6px; }
+
+/* Dots */
+.partDots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 14px;
+}
+
+.carouselWrap {}
 .carouselTrack {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 14px;
   margin-bottom: 16px;
 }
-
 .carouselItem {
-  height: 72px;
+  height: 90px;
   border: 1.5px dashed #ccc8c0;
   border-radius: 10px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   font-size: 12px;
   color: var(--text-muted, #5a5a52);
   background: var(--cream, #f5f2ed);
-  /* Remplacer border dashed + background quand vraie image */
 }
-
+.carouselItemImg {
+  max-height: 48px;
+  max-width: 80%;
+  object-fit: contain;
+}
+.carouselItemName {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-align: center;
+}
 .carouselControls {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 12px;
 }
-
 .carouselBtn {
   background: var(--cream, #f5f2ed);
   border: 0.5px solid #ddd9d0;
@@ -218,13 +387,21 @@
 }
 .carouselBtn:disabled { opacity: 0.3; cursor: not-allowed; }
 .carouselBtn:not(:disabled):hover { background: #e8e4dd; }
-
 .carouselDots { display: flex; gap: 6px; align-items: center; }
 .dot {
   width: 7px; height: 7px; border-radius: 50%;
   background: #d5d1ca; cursor: pointer; transition: background 0.15s;
+  border: none;
+  padding: 0;
 }
 .dotActive { background: var(--green-dark); }
+
+@media (max-width: 768px) {
+  .partenaires { padding: 40px 20px; }
+  .partSlide { gap: 10px; }
+  .partCell { min-height: 110px; padding: 16px 12px; }
+  .partLogo { max-height: 56px; }
+}
 
 /* ── RÉSEAU ── */
 .reseau {
@@ -251,12 +428,12 @@
 
 .regionName {
   font-family: 'Playfair Display', serif;
-  font-size: 15px; font-weight: 600;
+  font-size: 16px; font-weight: 600;
   color: var(--green-dark);
 }
 
 .regionDesc {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--text-muted, #5a5a52);
   line-height: 1.6;
   margin-bottom: 10px;
@@ -273,7 +450,6 @@
   color: var(--text-muted, #5a5a52);
 }
 
-.reseauRight {}
 
 .reseauMapPlaceholder {
   aspect-ratio: 1;
@@ -289,13 +465,45 @@
   font-size: 13px;
 }
 
+.reseauRight {
+  width: 100%;
+  aspect-ratio: 1;
+  min-height: 300px;
+  padding-top: 100px;
+}
+
 /* ── ENGAGEMENT ── */
 .engagement {
   background: var(--green-dark);
   padding: 64px 40px;
+  overflow: hidden; /* empêche tout débordement horizontal */
 }
 
-.engagementInner { max-width: 900px; margin: 0 auto; }
+.engagementInner {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.engagementLayout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+}
+
+.engagementText {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Un seul bloc .engagementCarousel — doublon supprimé */
+.engagementCarousel {
+  width: 100%;
+  min-width: 0;       /* empêche le débordement dans la grid */
+  overflow: hidden;   /* contient les flèches absolues du CarouselPartenaires */
+  border-radius: 10px;
+}
 
 .engagementCards {
   display: grid;
@@ -313,18 +521,21 @@
 
 .engagementNum {
   font-family: 'Playfair Display', serif;
-  font-size: 28px; font-weight: 700;
+  font-size: 28px;
+  font-weight: 700;
   color: rgba(255,255,255,0.2);
   margin-bottom: 10px;
 }
 
 .engagementTitle {
-  font-size: 13px; font-weight: 500;
-  color: #fff; margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #fff;
+  margin-bottom: 6px;
 }
 
 .engagementDesc {
-  font-size: 12px;
+  font-size: 14px;
   color: rgba(255,255,255,0.55);
   line-height: 1.6;
 }
@@ -350,6 +561,13 @@
   background: rgba(255,255,255,0.04);
 }
 
+@media (max-width: 768px) {
+  .engagement { padding: 40px 20px; }
+  .engagementLayout { grid-template-columns: 1fr; gap: 32px; }
+  .engagementCards { grid-template-columns: 1fr; }
+  .engagementImages { grid-template-columns: 1fr 1fr; }
+}
+
 /* ── RESPONSIVE ── */
 @media (max-width: 1024px) {
   .valeursGrid { grid-template-columns: repeat(2, 1fr); }
@@ -372,9 +590,12 @@
   .engagement { padding: 40px 20px; }
   .engagementCards { grid-template-columns: 1fr; }
   .engagementImages { grid-template-columns: 1fr 1fr; }
+  .engagementLayout { grid-template-columns: 1fr; gap: 32px; }
+  .engagementCarousel { max-width: 100%; margin: 0 auto; }
 }
 
 @media (max-width: 480px) {
   .valeursGrid { grid-template-columns: 1fr; }
   .chiffresGrid { grid-template-columns: 1fr 1fr; }
+  .engagementInner { padding: 0; }
 }

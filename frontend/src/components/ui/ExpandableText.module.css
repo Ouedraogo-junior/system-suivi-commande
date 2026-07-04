@@ -1,0 +1,29 @@
+/* src/components/ui/ExpandableText.module.css */
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.body {
+  margin: 0;
+  line-height: 1.65;
+}
+
+.toggle {
+  align-self: flex-start;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-primary, #1a73e8);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: opacity 0.15s;
+}
+
+.toggle:hover {
+  opacity: 0.75;
+}

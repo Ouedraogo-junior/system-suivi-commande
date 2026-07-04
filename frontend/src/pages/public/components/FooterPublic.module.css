@@ -1,20 +1,18 @@
 /* src/pages/public/components/FooterPublic.module.css */
 .footer {
-  background: #111f14;
+  background: var(--white, #fff);
   padding: 40px 40px 20px;
 }
-
 .top {
-  display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr;
-  gap: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   padding-bottom: 28px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+  border-bottom: 1px solid rgba(0,0,0,0.08);
   margin-bottom: 20px;
+  gap: 16px;
 }
-
 .brand { display: flex; gap: 12px; align-items: flex-start; }
-
 .logoMark {
   width: 36px;
   height: 36px;
@@ -25,56 +23,59 @@
   justify-content: center;
   flex-shrink: 0;
 }
-
 .logoMark span {
   color: #fff;
   font-family: 'Playfair Display', serif;
   font-size: 13px;
   font-weight: 700;
 }
-
 .logoName {
   font-family: 'Playfair Display', serif;
   font-size: 15px;
   font-weight: 600;
-  color: rgba(255,255,255,0.85);
+  color: rgba(0,0,0,0.85);
   margin-bottom: 4px;
 }
-
 .tagline {
   font-size: 12px;
-  color: rgba(255,255,255,0.4);
+  color: rgba(0,0,0,0.5);
   line-height: 1.5;
   max-width: 200px;
 }
-
 .links {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
-
 .link {
   font-size: 13px;
-  color: rgba(255,255,255,0.5);
+  color: rgba(0,0,0,0.55);
   text-decoration: none;
   transition: color 0.15s;
 }
-
-.link:hover { color: rgba(255,255,255,0.85); }
-
-.contact {
+.link:hover { color: rgba(0,0,0,0.9); }
+/* Section contact : masquee sur desktop pour laisser le logo occuper tout l'espace,
+   reapparait en dessous du logo sur mobile */
+.devise {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 8px;
+  font-size: 20px;
+  font-weight: 700;
+  color: rgba(0,0,0,0.85);
 }
 
-.contactItem {
-  font-size: 12px;
-  color: rgba(255,255,255,0.45);
-  line-height: 1.5;
+.deviseWord {
+  display: inline-block;
+  opacity: 0;
+  animation: deviseIn 0.3s ease forwards;
 }
 
+@keyframes deviseIn {
+  from { opacity: 0; transform: translateX(30px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
 .bottom {
   display: flex;
   justify-content: space-between;
@@ -82,20 +83,23 @@
   flex-wrap: wrap;
   gap: 8px;
   font-size: 11px;
-  color: rgba(255,255,255,0.3);
+  color: rgba(0,0,0,0.45);
 }
-
 .loginLink {
   font-size: 11px;
-  color: rgba(255,255,255,0.4);
+  color: rgba(0,0,0,0.5);
   text-decoration: none;
   transition: color 0.15s;
 }
-
-.loginLink:hover { color: rgba(255,255,255,0.75); }
-
+.logoImg {
+  height: 80px;
+  width: auto;
+  object-fit: contain;
+}
+.loginLink:hover { color: rgba(0,0,0,0.85); }
 @media (max-width: 768px) {
   .footer { padding: 32px 20px 16px; }
-  .top { grid-template-columns: 1fr; gap: 24px; }
+  .top { flex-direction: column; gap: 24px; }
+  .contact { display: flex; }
   .bottom { flex-direction: column; align-items: flex-start; gap: 6px; }
 }

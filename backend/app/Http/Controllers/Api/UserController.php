@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -57,5 +58,32 @@ class UserController extends Controller
     {
         $user->update(['actif' => !$user->actif]);
         return response()->json($user);
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $user = $request->user();
+
+        $data = $request->validate([
+            'pseudo'           => "sometimes|required|string|max:50|unique:users,pseudo,{$user->id}",
+            'password'         => 'nullable|string|min:6|confirmed',
+            'current_password' => 'required_with:password|string',
+        ]);
+
+        if (!empty($data['password'])) {
+            if (!Hash::check($data['current_password'], $user->password)) {
+                return response()->json([
+                    'message' => 'Mot de passe actuel incorrect.',
+                    'errors'  => ['current_password' => ['Mot de passe actuel incorrect.']],
+                ], 422);
+            }
+        }
+
+        $user->update([
+            'pseudo'   => $data['pseudo']   ?? $user->pseudo,
+            'password' => $data['password'] ?? $user->password,
+        ]);
+
+        return response()->json($user->fresh());
     }
 }

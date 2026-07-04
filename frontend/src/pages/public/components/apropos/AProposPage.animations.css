@@ -1,0 +1,214 @@
+/* src/pages/public/components/apropos/AProposPage.animations.css */
+/* ══════════════════════════════════════════════════════════════
+   AProposPage.animations.css
+   Toutes les animations et transitions de la page À Propos.
+   Importer dans AProposPage.jsx après AProposPage.module.css
+   et dans chaque composant apropos qui en a besoin.
+══════════════════════════════════════════════════════════════ */
+
+/* ── Les variables :root sont déjà déclarées dans AccueilPage.animations.css
+   On les réutilise sans les redéclarer. ── */
+
+
+/* ══════════════════════════════════════════════════════════════
+   1. HERO — entrée en cascade au chargement (même @keyframes
+   heroFadeUp que l'accueil, défini ici en autonomie)
+══════════════════════════════════════════════════════════════ */
+@keyframes heroFadeUp {
+  0%   { opacity: 0; transform: translateY(48px) scale(0.97); filter: blur(3px); }
+  60%  { filter: blur(0); }
+  100% { opacity: 1; transform: translateY(0)    scale(1);    filter: blur(0); }
+}
+
+/* Breadcrumb → label → titre → sous-titre */
+.aproposHeroAnimate1 { opacity: 0; animation: heroFadeUp 750ms  cubic-bezier(0.16, 1, 0.3, 1) 0.05s forwards; }
+.aproposHeroAnimate2 { opacity: 0; animation: heroFadeUp 750ms  cubic-bezier(0.16, 1, 0.3, 1) 0.20s forwards; }
+.aproposHeroAnimate3 { opacity: 0; animation: heroFadeUp 1100ms cubic-bezier(0.16, 1, 0.3, 1) 0.35s forwards; }
+.aproposHeroAnimate4 { opacity: 0; animation: heroFadeUp 750ms  cubic-bezier(0.16, 1, 0.3, 1) 0.55s forwards; }
+
+
+/* ══════════════════════════════════════════════════════════════
+   2. SCROLL-REVEAL — états initiaux (identiques à l'accueil)
+══════════════════════════════════════════════════════════════ */
+.accReveal-Up, .accReveal-Left, .accReveal-Right {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+@media (min-width: 901px) {
+  .accReveal-Up, .accReveal-Left, .accReveal-Right {
+    transition: opacity 0.7s var(--ease-expo), transform 0.7s var(--ease-expo);
+  }
+  .accReveal-Up    { transform: translateY(32px); }
+  .accReveal-Left  { transform: translateX(-24px); }
+  .accReveal-Right { transform: translateX(24px); }
+
+  .accReveal-Up.accReveal-done,
+  .accReveal-Left.accReveal-done,
+  .accReveal-Right.accReveal-done {
+    opacity: 1;
+    transform: translate(0, 0);
+    pointer-events: auto;
+  }
+}
+
+@media (max-width: 900px) {
+  .accReveal-Up.accReveal-done,
+  .accReveal-Left.accReveal-done,
+  .accReveal-Right.accReveal-done {
+    pointer-events: auto;
+  }
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   3. CARTES ENFANTS — animées quand le parent est .revealed
+══════════════════════════════════════════════════════════════ */
+@keyframes cardRise {
+  0%   { opacity: 0; transform: translateY(32px) scale(0.95); }
+  100% { opacity: 1; transform: translateY(0)    scale(1); }
+}
+
+@keyframes slideInLeft {
+  0%   { opacity: 0; transform: translateX(-28px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+/* FIX : état masqué conditionné au parent NON encore révélé
+   Évite le blocage de layout et le recalcul sauvage au montage */
+.revealUp:not(.revealed) .chiffreCard,
+.revealUp:not(.revealed) .valeurCard,
+.revealUp:not(.revealed) .carouselItem,
+.revealLeft:not(.revealed) .regionCard {
+  opacity: 0;
+  transform: translateY(32px) scale(0.95);
+}
+
+/* Déclenchement via parent .revealed */
+.revealed .chiffreCardAnim {
+  animation: cardRise 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) var(--chiffre-delay, 0s) forwards;
+}
+.revealed .valeurCardAnim {
+  animation: cardRise 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) var(--valeur-delay, 0s) forwards;
+}
+.revealed .carouselItemAnim {
+  animation: cardRise 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) var(--carousel-delay, 0s) forwards;
+}
+.revealed .regionCardAnim {
+  animation: slideInLeft 0.6s cubic-bezier(0.16, 1, 0.3, 1) var(--region-delay, 0s) forwards;
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   4. CTA — entrée simple
+══════════════════════════════════════════════════════════════ */
+.ctaAnimate {
+  opacity: 0;
+  animation: heroFadeUp 750ms cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   5. HOVER — micro-interactions
+══════════════════════════════════════════════════════════════ */
+
+/* Cartes chiffres */
+.chiffreCard {
+  transition:
+    transform   450ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow  450ms ease,
+    border-color 450ms ease;
+}
+.chiffreCard:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 12px 28px rgba(26, 92, 42, 0.10);
+  border-color: var(--green-light, #8db87a);
+}
+
+/* Cartes valeurs */
+.valeurCard {
+  transition:
+    transform    450ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow   450ms ease,
+    border-color 450ms ease;
+}
+.valeurCard:hover {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: 0 16px 36px rgba(26, 92, 42, 0.12);
+  border-color: var(--green-light, #8db87a);
+}
+
+/* Icône valeur — rotation douce */
+.valeurIconWrap {
+  transition: transform 450ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.valeurCard:hover .valeurIconWrap {
+  transform: rotate(-6deg) scale(1.08);
+}
+
+/* Cartes partenaires */
+.carouselItem {
+  transition:
+    transform    450ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    border-color 220ms ease,
+    background   220ms ease;
+}
+.carouselItem:hover {
+  transform: translateY(-4px) scale(1.02);
+  border-color: var(--brown, #8b5e3c);
+  background: #fff;
+}
+
+/* Cartes régions */
+.regionCard {
+  transition:
+    transform    450ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow   450ms ease,
+    border-color 220ms ease;
+}
+.regionCard:hover {
+  transform: translateX(10px);
+  box-shadow: 0 6px 20px rgba(26, 92, 42, 0.10);
+  border-color: var(--green-light, #8db87a);
+}
+
+/* Boutons carousel */
+.carouselBtn {
+  transition:
+    background  220ms ease,
+    transform   220ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.carouselBtn:not(:disabled):hover {
+  transform: scale(1.12);
+}
+
+/* CTA bouton */
+.ctaBtn {
+  transition:
+    transform   220ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow  450ms ease,
+    background  220ms ease;
+}
+.ctaBtn:hover  { transform: translateY(-3px) scale(1.02); box-shadow: 0 10px 28px rgba(139, 94, 60, 0.35); }
+.ctaBtn:active { transform: translateY(0)    scale(0.98); }
+
+/* Breadcrumb link */
+.breadcrumbLink {
+  transition: color 150ms ease;
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   6. RESPONSIVE — amplitudes réduites sur mobile
+══════════════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .revealUp    { transform: translateY(44px);              filter: blur(2px); }
+  .revealLeft  { transform: translateY(44px) rotate(0deg); filter: blur(2px); }
+  .revealRight { transform: translateY(44px) rotate(0deg); filter: blur(2px); }
+
+  .aproposHeroAnimate1 { animation-duration: 600ms; }
+  .aproposHeroAnimate2 { animation-duration: 600ms; }
+  .aproposHeroAnimate3 { animation-duration: 700ms; }
+  .aproposHeroAnimate4 { animation-duration: 600ms; }
+}

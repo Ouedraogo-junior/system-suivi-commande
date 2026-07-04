@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import styles from './AppLayout.module.css';
+import ModalProfile from '../ui/ModalProfile';
 
 // ===== ICÔNES =====
 const Icons = {
@@ -107,7 +108,7 @@ function getInitials(name = '') {
 }
 
 // ===== COMPOSANT SIDEBAR =====
-function Sidebar({ user, onLogout, isOpen, onClose }) {
+function Sidebar({ user, onLogout, isOpen, onClose, onProfileClick }) {
   const nav = user?.role === 'ADMIN' ? NAV_ADMIN : NAV_AGENT;
 
   return (
@@ -149,7 +150,7 @@ function Sidebar({ user, onLogout, isOpen, onClose }) {
 
         {/* Profil + Logout */}
         <div className={styles.sbBottom}>
-          <div className={styles.sbAgent}>
+          <div className={styles.sbAgent} onClick={onProfileClick} style={{ cursor: 'pointer' }}>
             <div className={styles.sbAvatar}>{getInitials(user?.nom_complet)}</div>
             <div className={styles.sbAgentInfo}>
               <div className={styles.sbAgentName}>{user?.nom_complet}</div>
@@ -190,7 +191,8 @@ function Topbar({ title, subtitle, onMenuClick, children }) {
 export default function AppLayout({ title, subtitle, topbarActions, children }) {
   const { user, logout } = useAuth();
   const navigate          = useNavigate();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen]   = useState(false);
+  const [profileOpen, setProfileOpen]   = useState(false); // ← nouveau
 
   const handleLogout = async () => {
     await logout();
@@ -204,17 +206,16 @@ export default function AppLayout({ title, subtitle, topbarActions, children }) 
         onLogout={handleLogout}
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
+        onProfileClick={() => setProfileOpen(true)} 
       />
       <div className={styles.main}>
-        <Topbar
-          title={title}
-          subtitle={subtitle}
-          onMenuClick={() => setSidebarOpen(true)}
-        >
+        <Topbar title={title} subtitle={subtitle} onMenuClick={() => setSidebarOpen(true)}>
           {topbarActions}
         </Topbar>
         <main className={styles.content}>{children}</main>
       </div>
+
+      {profileOpen && <ModalProfile onClose={() => setProfileOpen(false)} />}
     </div>
   );
 }

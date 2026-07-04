@@ -1,0 +1,100 @@
+/* ══════════════════════════════════════════════════════════════
+   ServicesPage.animations.css
+   Toutes les animations et transitions de la page Services.
+   Importer dans ServicesPage.jsx et HeroServices.jsx
+══════════════════════════════════════════════════════════════ */
+
+
+/* ══════════════════════════════════════════════════════════════
+   1. HERO — entrée en cascade au chargement
+══════════════════════════════════════════════════════════════ */
+@keyframes heroFadeUp {
+  0%   { opacity: 0; transform: translateY(48px) scale(0.97); filter: blur(3px); }
+  60%  { filter: blur(0); }
+  100% { opacity: 1; transform: translateY(0)    scale(1);    filter: blur(0); }
+}
+
+/* Breadcrumb → label → titre → sous-titre → tabs */
+.servicesHeroAnimate1 { opacity: 0; animation: heroFadeUp 750ms  cubic-bezier(0.16, 1, 0.3, 1) 0.05s forwards; }
+.servicesHeroAnimate2 { opacity: 0; animation: heroFadeUp 750ms  cubic-bezier(0.16, 1, 0.3, 1) 0.18s forwards; }
+.servicesHeroAnimate3 { opacity: 0; animation: heroFadeUp 1100ms cubic-bezier(0.16, 1, 0.3, 1) 0.32s forwards; }
+.servicesHeroAnimate4 { opacity: 0; animation: heroFadeUp 750ms  cubic-bezier(0.16, 1, 0.3, 1) 0.50s forwards; }
+.servicesHeroAnimate5 { opacity: 0; animation: heroFadeUp 750ms  cubic-bezier(0.16, 1, 0.3, 1) 0.68s forwards; }
+
+/* Tabs individuels — décalage par index via --tab-delay */
+@keyframes tabSlideIn {
+  0%   { opacity: 0; transform: translateY(16px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.heroTabAnim {
+  opacity: 0;
+  animation: tabSlideIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) var(--tab-delay, 0s) forwards;
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   2. SCROLL-REVEAL — états initiaux
+══════════════════════════════════════════════════════════════ */
+.revealUp,
+.revealLeft,
+.revealRight {
+  opacity: 0;
+  will-change: opacity, transform, filter;
+  transition:
+    opacity   0.85s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+    filter    0.85s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.revealUp    { transform: translateY(70px) scale(0.97);      filter: blur(4px); }
+.revealLeft  { transform: translateX(-64px) rotate(-1.5deg); filter: blur(4px); }
+.revealRight { transform: translateX(64px)  rotate(1.5deg);  filter: blur(4px); }
+
+.revealed {
+  opacity: 1 !important;
+  transform: none !important;
+  filter: blur(0) !important;
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   3. CARTES ENFANTS — animées quand le parent est .revealed
+══════════════════════════════════════════════════════════════ */
+@keyframes cardRise {
+  0%   { opacity: 0; transform: translateY(32px) scale(0.95); }
+  100% { opacity: 1; transform: translateY(0)    scale(1); }
+}
+
+@keyframes galItemRise {
+  0%   { opacity: 0; transform: translateY(24px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* États initiaux masqués */
+
+
+.revealed .catCardAnim {
+  animation: cardRise 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) var(--cat-delay, 0s) forwards;
+}
+
+.revealed .galItemAnim {
+  animation: galItemRise 0.6s cubic-bezier(0.16, 1, 0.3, 1) var(--gal-delay, 0s) forwards;
+}
+
+
+
+
+/* ══════════════════════════════════════════════════════════════
+   5. RESPONSIVE
+══════════════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .revealUp    { transform: translateY(44px);              filter: blur(2px); }
+  .revealLeft  { transform: translateY(44px) rotate(0deg); filter: blur(2px); }
+  .revealRight { transform: translateY(44px) rotate(0deg); filter: blur(2px); }
+
+  .servicesHeroAnimate1,
+  .servicesHeroAnimate2,
+  .servicesHeroAnimate4,
+  .servicesHeroAnimate5 { animation-duration: 600ms; }
+  .servicesHeroAnimate3 { animation-duration: 700ms; }
+}

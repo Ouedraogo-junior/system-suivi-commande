@@ -9,6 +9,8 @@ function formatMontant(v) {
 export default function RecapitulatifSection({
   sousTotal,
   remise,
+  remiseType,
+  montantRemise,
   tva,
   tvaTaux,
   montantTVA,
@@ -19,8 +21,8 @@ export default function RecapitulatifSection({
   onGenererProForma,
   onVoirCommande,
 }) {
-  const remisePct    = parseFloat(remise) || 0;
-  const montantRemise = sousTotal * remisePct / 100;
+  // const remisePct    = parseFloat(remise) || 0;
+  // const montantRemise = sousTotal * remisePct / 100;
 
   return (
     <div className={styles.card}>
@@ -32,9 +34,9 @@ export default function RecapitulatifSection({
           <span>{formatMontant(sousTotal)}</span>
         </div>
 
-        {remisePct > 0 && (
+        {montantRemise > 0 && (
           <div className={styles.recapRow}>
-            <span>Remise ({remisePct}%)</span>
+            <span>Remise{remiseType === 'PERCENT' ? ` (${parseFloat(remise) || 0}%)` : ''}</span>
             <span>− {formatMontant(montantRemise)}</span>
           </div>
         )}

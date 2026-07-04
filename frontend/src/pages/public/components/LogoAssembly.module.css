@@ -1,0 +1,127 @@
+/* src/pages/public/components/LogoAssembly.module.css */
+.section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 9px 12px;
+  background: var(--white, #fff);
+}
+
+/*
+  Nouveau logo source (fichier "entete", officiel) : viewBox 613.44 x 141.7,
+  ratio ~ 4.329 (icone à gauche, texte empilé à droite). C'est la forme
+  NATIVE large du logo : plus besoin d'etirement/scaleX, .stage suit
+  simplement ce ratio et toutes les valeurs cqw en decoulent directement.
+*/
+.stageOuter {
+  width: var(--logo-width, 100%);
+  max-width: var(--logo-cap, none);
+  container-type: inline-size;
+}
+
+/* Sur mobile, le plafond en px n'a plus lieu d'être (l'écran est déjà étroit) :
+   on privilégie un pourcentage plus large pour réduire les marges gauche/droite. */
+@media (max-width: 640px) {
+  .stageOuter {
+    width: var(--logo-width-mobile, 92%);
+    max-width: none;
+  }
+}
+
+/* Mode borne (quand maxWidth est passe) : logo plafonne, comportement inchange */
+.stageOuter.capped {
+  width: auto;
+  max-width: var(--logo-max-width, 320px);
+}
+
+.stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 613.44 / 141.7;
+  container-type: inline-size;
+}
+
+.sectionTransparent {
+  background: transparent;
+  padding: 0;
+}
+
+.part {
+  position: absolute;
+}
+
+/* ── Icone feuille + gousse (image, fidele au fichier source) ── */
+.icon {
+  top: 0.081cqw;
+  left: 1.361cqw;
+  width: 15.855cqw;
+  height: 22.827cqw;
+  object-fit: contain;
+  object-position: top left;
+  animation: kIcon 3s ease-in-out infinite;
+}
+
+/* ── Ligne de separation brune ── */
+.line {
+  top: 8.209cqw;
+  left: 10.729cqw;
+  width: 89.271cqw;
+  height: max(1px, 0.383cqw);
+  background: #AA7956;
+  transform-origin: left;
+  animation: kLine 3s ease-in-out infinite;
+}
+
+/* ── Wordmark SOGECOP (image, fidele au fichier source) ── */
+.name {
+  top: 9.270cqw;
+  left: 25.271cqw;
+  width: 63.706cqw;
+  height: 5.658cqw;
+  object-fit: contain;
+  object-position: left center;
+  animation: kName 3s ease-in-out infinite;
+}
+
+/* ── Sous-titre "Societe Generale de Commerce et de Prestations" (image) ── */
+.subtitle {
+  top: 15.610cqw;
+  left: 10.501cqw;
+  width: 89.499cqw;
+  height: 7.475cqw;
+  object-fit: contain;
+  object-position: left top;
+  animation: kSubtitle 3s ease-in-out infinite;
+}
+
+/* ── Animations d'assemblage ── */
+@keyframes kIcon {
+  0%, 100% { opacity: 0; transform: translate(-15%, -15%) rotate(-12deg); }
+  25%, 75% { opacity: 1; transform: translate(0, 0) rotate(0deg); }
+  90%      { opacity: 0; transform: translate(-15%, -15%) rotate(-12deg); }
+}
+@keyframes kLine {
+  0%, 30%, 100% { opacity: 0; transform: scaleX(0); }
+  45%, 75%      { opacity: 1; transform: scaleX(1); }
+  90%           { opacity: 0; }
+}
+@keyframes kName {
+  0%, 35%  { opacity: 0; transform: translateY(-30%) scale(0.85); }
+  52%, 75% { opacity: 1; transform: translateY(0) scale(1); }
+  88%      { opacity: 0; transform: translateY(-30%) scale(0.85); }
+  100%     { opacity: 0; }
+}
+@keyframes kSubtitle {
+  0%, 55%, 100% { opacity: 0; transform: translateY(20%); }
+  70%, 75%      { opacity: 1; transform: translateY(0); }
+  90%           { opacity: 0; transform: translateY(20%); }
+}
+
+/* ── Accessibilite ── */
+@media (prefers-reduced-motion: reduce) {
+  .icon, .line, .name, .subtitle {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}

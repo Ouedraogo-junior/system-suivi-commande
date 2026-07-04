@@ -1,19 +1,50 @@
 // src/components/ui/modaldocument/ParamsOnglet.jsx
 import {
   REMISE_OPTIONS, ACOMPTE_OPTIONS, DELAI_OPTIONS,
-  VALIDITE_OPTIONS, CONDITIONS_IMPRIMERIE, calculs, fmt,
+  VALIDITE_OPTIONS, calculs, fmt,
 } from './useDocumentModal';
 import styles from '../ModalDocument.module.css';
 
 export default function ParamsOnglet({
-  commande, isProforma, isImprimerie, tvaTaux,
+  commande, isProforma, isFacture, isBonLiv, tvaTaux,
   remiseTaux,    setRemiseTaux,    remiseLibre,   setRemiseLibre,
+  remiseType,    setRemiseType,
   delai,         setDelai,         delaiLibre,    setDelaiLibre,
   acompteTaux,   setAcompteTaux,   acompteLibre,  setAcompteLibre,
   conditions,    setConditions,
   validite,      setValidite,      validiteLibre, setValiditeLibre,
+  objet,         setObjet,
   remiseFinal, acompteFinal,
 }) {
+  // ── Bon de livraison : formulaire minimal ──────────────────────────────────
+  if (isBonLiv) {
+    return (
+      <div className={styles.params}>
+        <div className={styles.paramGroup}>
+          <label className={styles.paramLabel}>Objet (optionnel)</label>
+          <textarea
+            className={styles.libreTextarea}
+            rows={4}
+            placeholder="Ex : Fourniture de consommables informatiques — Bon de commande N°..."
+            value={objet}
+            onChange={e => setObjet(e.target.value)}
+          />
+        </div>
+        <div className={styles.recapRapide}>
+          <div className={styles.recapRow}>
+            <span>Nombre d'articles</span>
+            <span>{commande.lignes?.length ?? 0}</span>
+          </div>
+          <div className={styles.recapRow}>
+            <span>Client</span>
+            <span>{commande.client?.nom_complet}</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Pro forma / Facture ────────────────────────────────────────────────────
   const c = calculs(commande, remiseFinal, acompteTaux, acompteFinal, tvaTaux);
 
   return (
@@ -22,24 +53,52 @@ export default function ParamsOnglet({
       {/* ── Remise ── */}
       <div className={styles.paramGroup}>
         <label className={styles.paramLabel}>Remise</label>
+
         <div className={styles.optionBtns}>
-          {REMISE_OPTIONS.map(v => (
-            <button
-              key={v}
-              className={`${styles.optBtn} ${remiseTaux === v && remiseLibre === '' ? styles.optBtnOn : ''}`}
-              onClick={() => { setRemiseTaux(v); setRemiseLibre(''); }}
-            >
-              {v === 0 ? 'Aucune' : `${v}%`}
-            </button>
-          ))}
+          <button
+            className={`${styles.optBtn} ${remiseType === 'PERCENT' ? styles.optBtnOn : ''}`}
+            onClick={() => setRemiseType('PERCENT')}
+          >
+            %
+          </button>
+          <button
+            className={`${styles.optBtn} ${remiseType === 'MONTANT' ? styles.optBtnOn : ''}`}
+            onClick={() => setRemiseType('MONTANT')}
+          >
+            Montant
+          </button>
         </div>
-        <input
-          className={styles.libreInput}
-          type="number" min="0" max="100"
-          placeholder="Autre taux... (%)"
-          value={remiseLibre}
-          onChange={e => setRemiseLibre(e.target.value)}
-        />
+
+        {remiseType === 'PERCENT' ? (
+          <>
+            <div className={styles.optionBtns}>
+              {REMISE_OPTIONS.map(v => (
+                <button
+                  key={v}
+                  className={`${styles.optBtn} ${remiseTaux === v && remiseLibre === '' ? styles.optBtnOn : ''}`}
+                  onClick={() => { setRemiseTaux(v); setRemiseLibre(''); }}
+                >
+                  {v === 0 ? 'Aucune' : `${v}%`}
+                </button>
+              ))}
+            </div>
+            <input
+              className={styles.libreInput}
+              type="number" min="0" max="100"
+              placeholder="Autre taux... (%)"
+              value={remiseLibre}
+              onChange={e => setRemiseLibre(e.target.value)}
+            />
+          </>
+        ) : (
+          <input
+            className={styles.libreInput}
+            type="number" min="0"
+            placeholder="Montant fixe (F CFA)..."
+            value={remiseLibre}
+            onChange={e => setRemiseLibre(e.target.value)}
+          />
+        )}
       </div>
 
       {/* ── Délai livraison (pro forma) ── */}
@@ -96,23 +155,17 @@ export default function ParamsOnglet({
       {isProforma && (
         <div className={styles.paramGroup}>
           <label className={styles.paramLabel}>Conditions</label>
-          {isImprimerie ? (
-            <div className={styles.conditionsFixed}>
-              {CONDITIONS_IMPRIMERIE}
-            </div>
-          ) : (
-            <textarea
-              className={styles.libreTextarea}
-              rows={4}
-              placeholder="Saisir les conditions applicables..."
-              value={conditions}
-              onChange={e => setConditions(e.target.value)}
-            />
-          )}
+          <textarea
+            className={styles.libreTextarea}
+            rows={4}
+            placeholder="Saisir les conditions applicables..."
+            value={conditions}
+            onChange={e => setConditions(e.target.value)}
+          />
         </div>
       )}
 
-      {/* ── Délai de validité (pro forma) ── */}
+      {/* ── Validité (pro forma) ── */}
       {isProforma && (
         <div className={styles.paramGroup}>
           <label className={styles.paramLabel}>Validité du pro forma</label>
@@ -148,7 +201,7 @@ export default function ParamsOnglet({
             <span>Reste à payer</span><span>{fmt(c.reste)}</span>
           </div>
         )}
-        {!isProforma && (
+        {isFacture && (
           <div className={`${styles.recapRow} ${styles.recapTotal}`}>
             <span>Solde restant</span>
             <span>{c.solde <= 0 ? '✓ Soldée' : fmt(c.solde)}</span>

@@ -5,12 +5,11 @@ import CarouselImages        from './components/CarouselImages';
 import { ACCUEIL_CONTENT }   from './data/accueil.data';
 import styles                from './AccueilPage.module.css';
 
-// ─── Fichier d'animations séparé (importé en global, pas en module)
 import './AccueilPage.animations.css';
 
-import CarouselPartenaires   from './components/CarouselPartenaires';
-import DomainesWheel         from './components/DomainesWheel';
-import FournGlobe from './components/FournGlobe';
+import DomainesWheel from './components/DomainesWheel';
+import FournGlobe    from './components/FournGlobe';
+import LogoAssembly  from './components/LogoAssembly';
 
 // ─── Icônes SVG inline ───────────────────────────────────────
 const Icons = {
@@ -22,47 +21,6 @@ const Icons = {
 
 const SVC_ICONS  = [Icons.print, Icons.pc, Icons.world, Icons.home];
 const SVC_COLORS = ['var(--green-dark)', 'var(--brown)', 'var(--brown)', 'var(--green-dark)'];
-
-
-// ─── Hook : scroll-reveal avec Intersection Observer ─────────
-//
-// Changements clés vs version précédente :
-//  • threshold: 0.12  → l'élément doit être visible à 12% avant de déclencher
-//  • rootMargin: '-8% 0px -5% 0px'  → marges réduites pour déclencher plus tôt
-//  • Pas de timer retardé — on observe immédiatement mais le rootMargin
-//    empêche les faux positifs au chargement
-//
-function useScrollReveal() {
-  useEffect(() => {
-    const els = document.querySelectorAll('[data-reveal]');
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('revealed');   // classe globale, pas CSS module
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      {
-        threshold:  0.12,                    // 12% visible = déclenche
-        rootMargin: '-8% 0px -5% 0px',      // ni trop tôt, ni trop tard
-      }
-    );
-
-    // Délai minimal (60ms) juste pour laisser le layout se stabiliser
-    // sans masquer les animations aux utilisateurs qui scrollent vite
-    const timer = setTimeout(() => {
-      els.forEach((el) => observer.observe(el));
-    }, 60);
-
-    return () => {
-      clearTimeout(timer);
-      observer.disconnect();
-    };
-  }, []);
-}
 
 
 // ─── Hook : compteur animé ────────────────────────────────────
@@ -79,7 +37,6 @@ function useCountUp(ref, end, duration = 1800) {
     const step = (timestamp) => {
       if (!start) start = timestamp;
       const progress = Math.min((timestamp - start) / duration, 1);
-      // ease-out quart — plus marqué que cubic
       const eased = 1 - Math.pow(1 - progress, 4);
       const val   = Math.round(eased * target);
       el.textContent = val + suffix;
@@ -105,10 +62,15 @@ function useCountUp(ref, end, duration = 1800) {
 // ─── Composant stat individuel ────────────────────────────────
 function StatCounter({ num, lbl }) {
   const ref = useRef(null);
-  useCountUp(ref, num, 1800);
+  const isNumeric = !isNaN(parseFloat(num)) && isFinite(num.toString().replace(/[^0-9.-]/g, ''));
+
+  useCountUp(isNumeric ? ref : { current: null }, num, 1800);
+
   return (
     <div className={styles.statItem}>
-      <div className={styles.statNum} ref={ref} data-target={num}>0</div>
+      <div className={styles.statNum} ref={isNumeric ? ref : null} data-target={num}>
+        {isNumeric ? '0' : num}
+      </div>
       <div className={styles.statLbl}>{lbl}</div>
     </div>
   );
@@ -118,12 +80,15 @@ function StatCounter({ num, lbl }) {
 // ─── Page ────────────────────────────────────────────────────
 export default function AccueilPage({ lang }) {
   const t = ACCUEIL_CONTENT[lang];
-  useScrollReveal();
 
   return (
     <div className={styles.page}>
 
       {/* ── HERO ── */}
+            <div style={{ width: '100%', '--logo-width': '70%', '--logo-cap': '1000px' }}>
+        <LogoAssembly />
+      </div>
+
       <section className={styles.hero}>
         <div className={styles.heroBgShape}  aria-hidden="true" />
         <div className={styles.heroBgShape2} aria-hidden="true" />
@@ -132,7 +97,6 @@ export default function AccueilPage({ lang }) {
         <div className={styles.heroDotGrid}  aria-hidden="true" />
 
         <div className={styles.heroContent}>
-          {/* Les classes heroAnimateX sont définies dans animations.css (global) */}
           <div className={`${styles.heroBadge} heroAnimate1`}>{t.heroBadge}</div>
           <h1 className={`${styles.heroTitle} heroAnimate2`}>
             {t.heroTitle[0]}<br />{t.heroTitle[1]}<br />
@@ -157,32 +121,34 @@ export default function AccueilPage({ lang }) {
 
       {/* ── À PROPOS ── */}
       <section className={styles.about}>
-        {/*
-          Les classes revealLeft / revealRight sont dans animations.css (global).
-          Le data-reveal déclenche l'ajout de .revealed via useScrollReveal.
-        */}
-        <div className={`${styles.aboutLeft} revealLeft`} data-reveal>
+        <div className={styles.aboutLeft}>
           <div className={styles.sectionLabel}>{t.aboutLabel}</div>
           <h2 className={styles.sectionTitle}>{t.aboutTitle}</h2>
           <p className={styles.sectionBody}>{t.aboutBody}</p>
           <Link to="/apropos" className={styles.sectionLink}>{t.aboutLink}</Link>
         </div>
-        <div className={`${styles.aboutPartenaires} revealRight`} data-reveal>
+        <div className={styles.aboutPartenaires}>
           <div className={styles.aboutPartenairesLabel}>{t.partenairesLabel}</div>
-          <CarouselPartenaires items={t.partenaires} />
+          <CarouselImages
+            slides={t.partenaires.map((p, i) => ({ id: i, label: p.alt, src: p.src, alt: p.alt }))}
+            fit="contain"
+            aspectRatio="1 / 1"
+          />
         </div>
       </section>
 
       {/* ── SERVICES ── */}
       <section className={styles.services}>
-        <div className={`${styles.servicesLeft} revealUp`} data-reveal>
+        <div className={styles.servicesLeft}>
           <div className={styles.sectionLabel}>{t.servicesLabel}</div>
           <h2 className={styles.sectionTitle}>{t.servicesTitle}</h2>
           <div className={styles.servicesGrid}>
             {t.services.map((svc, i) => (
-              <div key={i} className={`${styles.svcCard} svcCardAnim`}
-                   style={{ '--svc-delay': `${i * 0.1}s` }}>
+              <div key={i} className={styles.svcCard}>
                 <div className={styles.svcCardHead} style={{ background: SVC_COLORS[i] }}>
+                  {svc.img && (
+                    <img src={svc.img} alt={svc.title} className={styles.svcCardImg} />
+                  )}
                   <div className={styles.svcCardHeadIcon}>{SVC_ICONS[i]}</div>
                   <div className={styles.svcCardTitle}>{svc.title}</div>
                 </div>
@@ -197,29 +163,26 @@ export default function AccueilPage({ lang }) {
               </div>
             ))}
           </div>
-          <Link to="/public/services" className={styles.sectionLink}>{t.servicesLink}</Link>
+          <Link to="/services" className={styles.sectionLink}>{t.servicesLink}</Link>
         </div>
-        <div className={`${styles.servicesRight} revealRight`} data-reveal>
+        <div className={styles.servicesRight}>
           <div className={styles.srCarouselTitle}>{t.servicesRight.carouselTitle}</div>
-          <CarouselImages />
+          <CarouselImages slides={t.servicesRight.slides} />
         </div>
       </section>
 
       {/* ── ASSOCIATIONS ── */}
       <section className={styles.assoc}>
-        <div className={`${styles.assocInner} revealUp`} data-reveal>
+        <div className={styles.assocInner}>
           <div className={styles.sectionLabel} style={{ color: 'rgba(255,255,255,0.6)' }}>{t.assocLabel}</div>
           <h2 className={styles.sectionTitle} style={{ color: '#fff' }}>{t.assocTitle}</h2>
           <p className={styles.sectionBody} style={{ color: 'rgba(255,255,255,0.7)', maxWidth: '620px' }}>{t.assocBody}</p>
-          <div className={styles.assocCards}>
-            {t.assocItems.map((item, i) => (
-              <div key={i} className={`${styles.assocCard} assocCardAnim`}
-                   style={{ '--assoc-delay': `${i * 0.14}s` }}>
-                <div className={styles.assocCardNum}>{item.num}</div>
-                <div className={styles.assocCardLabel}>{item.label}</div>
-                <div className={styles.assocCardSub}>{item.sub}</div>
-              </div>
-            ))}
+          <div className={styles.assocCarousel}>
+            <CarouselImages
+              slides={t.assocItems.map((p, i) => ({ id: i, label: p.alt, src: p.src, alt: p.alt }))}
+              fit="contain"
+              aspectRatio="1 / 1"
+            />
           </div>
           <Link to="/apropos" className={styles.assocLink}>{t.assocLink}</Link>
         </div>
@@ -227,26 +190,21 @@ export default function AccueilPage({ lang }) {
 
       {/* ── FOURNISSEURS ── */}
       <section className={styles.fourn}>
-        <div className={`${styles.fournLeft} revealLeft`} data-reveal>
+        <div className={styles.fournLeft}>
           <div className={styles.sectionLabel}>{t.fournLabel}</div>
           <h2 className={styles.sectionTitle}>{t.fournTitle}</h2>
           <p className={styles.sectionBody}>{t.fournBody}</p>
           <div className={styles.fournRegions}>
             {t.fournRegions.map((r, i) => (
-              <div
-                key={i}
-                className={`${styles.fournRegionCard} fournRegionAnim`}
-                style={{ '--fourn-delay': `${i * 0.12}s` }}
-              >
+              <div key={i} className={styles.fournRegionCard}>
                 <div className={styles.fournRegionName}>{r.region}</div>
                 <div className={styles.fournRegionDesc}>{r.desc}</div>
               </div>
             ))}
           </div>
         </div>
-      
-        {/* Globe interactif — remplace le placeholder */}
-        <div className={`${styles.fournRight} revealRight`} data-reveal>
+
+        <div className={styles.fournRight}>
           <FournGlobe />
         </div>
       </section>

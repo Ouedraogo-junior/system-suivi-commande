@@ -6,93 +6,93 @@
 <title>Facture {{ $reference }}</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'DejaVu Sans', sans-serif; font-size: 8pt; color: #1a1a1a; }
+body { font-family: 'DejaVu Sans', sans-serif; font-size: 10pt; color: #1a1a1a; }
 
-  /* ── HEADER LOGO ── */
-  /* .logo-wrap {
-    width: 100%;
-    text-align: center;
-    border-bottom: 2px solid #1a5c2a;
-    padding-bottom: 6px;
-    margin-bottom: 8px;
-  } */
-  .logo-wrap img { width: 100%; max-height: 60px; object-fit: contain; }
-  .logo-fallback { font-size: 13pt; font-weight: bold; color: #1a5c2a; letter-spacing: 2px; }
-  .logo-fallback-sub { font-size: 6pt; color: #888; }
+/* ── HEADER LOGO ── */
+.logo-wrap img { width: 100%; max-height: 60px; object-fit: contain; }
+.logo-fallback { font-size: 15pt; font-weight: bold; color: #1a5c2a; letter-spacing: 2px; }
+.logo-fallback-sub { font-size: 8pt; color: #888; }
 
-  /* ── TITRE ── */
-  .titre-bar { width: 100%; background: #1a5c2a; margin-bottom: 8px; }
+/* ── TITRE ── */
+.titre-bar { width: 100%; background: #1a5c2a; margin-bottom: 8px; }
 
-  /* ── META ── */
-  .meta-table { width: 100%; margin-bottom: 8px; }
-  .bloc-label {
-    font-size: 6.5pt; font-weight: bold; color: #1a5c2a;
-    text-transform: uppercase; letter-spacing: 0.8px;
-    border-bottom: 1px solid #c8a84b; padding-bottom: 1px;
-    margin-bottom: 3px; display: block;
-  }
-  .bloc-val { font-size: 7.5pt; line-height: 1.5; color: #222; }
+/* ── META ── */
+.meta-table { width: 100%; margin-bottom: 8px; }
+.bloc-label {
+  font-size: 8.5pt; font-weight: bold; color: #1a5c2a;
+  text-transform: uppercase; letter-spacing: 0.8px;
+  border-bottom: 1px solid #c8a84b; padding-bottom: 1px;
+  margin-bottom: 3px; display: block;
+}
+.bloc-val { font-size: 9.5pt; line-height: 1.5; color: #222; }
 
-  .badge { padding: 1px 6px; border-radius: 8px; font-size: 6.5pt; font-weight: bold; }
-  .badge-paye    { background: #d4edda; color: #155724; }
-  .badge-partiel { background: #fff3cd; color: #856404; }
-  .badge-non     { background: #f8d7da; color: #721c24; }
+.badge { padding: 1px 6px; border-radius: 8px; font-size: 8.5pt; font-weight: bold; }
+.badge-paye    { background: #d4edda; color: #155724; }
+.badge-partiel { background: #fff3cd; color: #856404; }
+.badge-non     { background: #f8d7da; color: #721c24; }
 
-  /* ── TABLEAU LIGNES ── */
-  .tbl { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
-  .tbl thead tr { background: #1a5c2a; }
-  .tbl thead th { color: #fff; padding: 5px 6px; font-size: 7.5pt; font-weight: bold; text-align: left; }
-  .tbl thead th.r { text-align: right; }
-  .tbl thead th.c { text-align: center; }
-  .tbl tbody tr { border-bottom: 1px solid #e8e8e8; }
-  .tbl tbody tr.alt { background: #f8f6f0; }
-  .tbl tbody td { padding: 4px 6px; font-size: 7.5pt; }
-  .tbl tbody td.r { text-align: right; }
-  .tbl tbody td.c { text-align: center; color: #999; font-size: 7pt; }
+/* ── TABLEAU LIGNES ── */
+.tbl { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+.tbl thead tr { background: #1a5c2a; }
+.tbl thead th { color: #fff; padding: 5px 6px; font-size: 9.5pt; font-weight: bold; text-align: left; }
+.tbl thead th.r { text-align: right; }
+.tbl thead th.c { text-align: center; }
+.tbl tbody tr { border-bottom: 1px solid #e8e8e8; }
+.tbl tbody tr.alt { background: #f8f6f0; }
+.tbl tbody td { padding: 4px 6px; font-size: 9.5pt; }
+.tbl tbody td.r { text-align: right; }
+.tbl tbody td.c { text-align: center; color: #999; font-size: 9pt; }
 
-  /* ── CALCULS ── */
-  .calc-tbl { width: 46%; border-collapse: collapse; margin-left: auto; margin-bottom: 8px; }
-  .calc-tbl td { padding: 3px 8px; font-size: 7.5pt; border-bottom: 1px solid #eee; }
-  .calc-tbl td.lbl { color: #1a5c2a; }
-  .calc-tbl td.val { text-align: right; font-weight: bold; }
-  .r-ttc td { background: #1a5c2a; color: #fff; font-size: 9pt; font-weight: bold; padding: 5px 8px; border: none; }
-  .r-ttc td.val { color: #c8a84b; }
-  .r-ttc td.lbl { color: #ffffff; }
+/* ── CALCULS ── */
+.calc-tbl { width: 46%; border-collapse: collapse; margin-left: auto; margin-bottom: 8px; }
+.calc-tbl td { padding: 3px 8px; font-size: 9.5pt; border-bottom: 1px solid #eee; }
+.calc-tbl td.lbl { color: #1a5c2a; }
+.calc-tbl td.val { text-align: right; font-weight: bold; }
+.r-ttc td { background: #1a5c2a; color: #fff; font-size: 11pt; font-weight: bold; padding: 5px 8px; border: none; }
+.r-ttc td.val { color: #ffffff; }
+.r-ttc td.lbl { color: #ffffff; }
 
-  /* ── VERSEMENTS ── */
-  .section-lbl {
-    font-size: 7pt; font-weight: bold; color: #1a5c2a;
-    text-transform: uppercase; letter-spacing: 0.8px;
-    border-bottom: 1.5px solid #1a5c2a; padding-bottom: 2px;
-    margin-bottom: 5px; display: block;
-  }
-  .vers-tbl { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
-  .vers-tbl thead tr { background: #f0f7f2; }
-  .vers-tbl thead th {
-    padding: 4px 6px; font-size: 7pt; color: #1a5c2a;
-    text-align: left; border-bottom: 1px solid #c8a84b; font-weight: bold;
-  }
-  .vers-tbl thead th.r { text-align: right; }
-  .vers-tbl tbody td { padding: 4px 6px; font-size: 7.5pt; border-bottom: 1px solid #eee; }
-  .vers-tbl tbody td.r { text-align: right; }
-  .vers-tbl tfoot td {
-    padding: 4px 6px; font-size: 8pt; font-weight: bold;
-    background: #f0f7f2; color: #1a5c2a; border-top: 1.5px solid #1a5c2a;
-  }
-  .vers-tbl tfoot td.r { text-align: right; }
+/* ── VERSEMENTS ── */
+.section-lbl {
+  font-size: 9pt; font-weight: bold; color: #1a5c2a;
+  text-transform: uppercase; letter-spacing: 0.8px;
+  border-bottom: 1.5px solid #1a5c2a; padding-bottom: 2px;
+  margin-bottom: 5px; display: block;
+}
+.vers-tbl { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+.vers-tbl thead tr { background: #f0f7f2; }
+.vers-tbl thead th {
+  padding: 4px 6px; font-size: 9pt; color: #1a5c2a;
+  text-align: left; border-bottom: 1px solid #c8a84b; font-weight: bold;
+}
+.vers-tbl thead th.r { text-align: right; }
+.vers-tbl tbody td { padding: 4px 6px; font-size: 9.5pt; border-bottom: 1px solid #eee; }
+.vers-tbl tbody td.r { text-align: right; }
+.vers-tbl tfoot td {
+  padding: 4px 6px; font-size: 10pt; font-weight: bold;
+  background: #f0f7f2; color: #1a5c2a; border-top: 1.5px solid #1a5c2a;
+}
+.vers-tbl tfoot td.r { text-align: right; }
 
-  /* ── SOLDE ── */
-  .solde-tbl { width: 46%; border-collapse: collapse; margin-left: auto; margin-bottom: 10px; }
-  .solde-tbl td { padding: 3px 8px; font-size: 7.5pt; border-bottom: 1px solid #eee; }
-  .solde-tbl td.lbl { color: #1a5c2a; }
-  .solde-tbl td.val { text-align: right; font-weight: bold; }
-  .r-solde td { background: #fdf8ee; }
-  .r-solde td.val { color: #b8860b; font-size: 9pt; }
-  .r-solde-ok td { background: #f0f7f2; }
-  .r-solde-ok td.val { color: #1a5c2a; font-size: 9pt; }
+/* ── SOLDE ── */
+.solde-tbl { width: 46%; border-collapse: collapse; margin-left: auto; margin-bottom: 10px; }
+.solde-tbl td { padding: 3px 8px; font-size: 9.5pt; border-bottom: 1px solid #eee; }
+.solde-tbl td.lbl { color: #1a5c2a; }
+.solde-tbl td.val { text-align: right; font-weight: bold; }
+.r-solde td { background: #fdf8ee; }
+.r-solde td.val { color: #000000; font-size: 11pt; }
+.r-solde-ok td { background: #f0f7f2; }
+.r-solde-ok td.val { color: #1a5c2a; font-size: 11pt; }
 
-  /* ── SIGNATURES ── */
-  .sig-tbl { width: 100%; margin-top: 350px; }
+/* ── SIGNATURES ── */
+.sig-fixed {
+  position: fixed;
+  bottom: 0mm;
+  left: 0mm;
+  width: 100%;
+}
+.sig-tbl { width: 100%; }
+
 </style>
 </head>
 <body>
@@ -112,8 +112,8 @@
   <table class="titre-bar" cellpadding="0" cellspacing="0">
     <tr>
       <td style="text-align:center; padding:6px 0 4px;">
-        <span style="font-size:12pt; font-weight:bold; letter-spacing:2px; color:#fff;">FACTURE DÉFINITIVE {{ $reference }}</span><br>
-        <span style="color:#c8a84b; font-size:7pt;">
+        <span style="font-size:14pt; font-weight:bold; letter-spacing:2px; color:#fff;">FACTURE DÉFINITIVE {{ $reference }}</span><br>
+        <span style="color:#fff; font-size:9pt;">
           {{-- {{ $reference }} &nbsp;|&nbsp;  --}}
           Émis le {{ now()->locale('fr')->isoFormat('D MMMM YYYY') }}
         </span>
@@ -204,7 +204,7 @@
     </tr>
     @endif
     <tr class="r-ttc">
-      <td class="lbl">TOTAL TTC</td>
+      <td class="lbl">TOTAL {{ $calculs['tva_applicable'] ? 'TTC' : 'HT' }}</td>
       <td class="val">{{ number_format($calculs['total_ttc'], 0, ',', ' ') }} F CFA</td>
     </tr>
   </table>
@@ -242,7 +242,7 @@
   <!-- SOLDE -->
   <table class="solde-tbl" cellpadding="0" cellspacing="0">
     <tr>
-      <td class="lbl">Total TTC</td>
+      <td class="lbl">Total {{ $calculs['tva_applicable'] ? 'TTC' : 'HT' }}</td>
       <td class="val">{{ number_format($calculs['total_ttc'], 0, ',', ' ') }} F</td>
     </tr>
     <tr>
@@ -272,27 +272,7 @@
   </table>
   @endif
 
-  <!-- SIGNATURES -->
-  <table class="sig-tbl" cellpadding="0" cellspacing="0">
-    <tr>
-      <td style="width:50%; text-align:center; vertical-align:bottom;">
-        <table style="width:100%;" cellpadding="0" cellspacing="0">
-          <tr><td style="text-align:center; font-size:7pt; font-weight:bold; color:#1a5c2a; text-transform:uppercase; padding-bottom:4px;">Le client</td></tr>
-          <tr><td style="text-align:center; font-size:7.5pt; color:#333; height:40px; vertical-align:bottom;">{{ $commande->client->nom_complet }}</td></tr>
-        </table>
-      </td>
-      <td style="width:50%; text-align:center; vertical-align:bottom;">
-        <table style="width:100%;" cellpadding="0" cellspacing="0">
-          <tr><td style="text-align:center; font-size:7pt; font-weight:bold; color:#1a5c2a; text-transform:uppercase; padding-bottom:4px;">Le responsable</td></tr>
-          <tr><td style="text-align:center; font-size:7.5pt; color:#333; height:40px; vertical-align:bottom;">
-            @if(!empty($commande->agent))
-              {{ $commande->agent->prenom ?? '' }} {{ $commande->agent->nom ?? '' }}
-            @endif
-          </td></tr>
-        </table>
-      </td>
-    </tr>
-  </table>
+  <!-- SIGNATURES (Rendu par le controller) -->
 
 </div>
 </body>

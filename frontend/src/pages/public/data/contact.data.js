@@ -12,23 +12,23 @@ export const CONTACT_CONTENT = {
     },
 
     infos: {
-      label: 'Nos coordonnées',
+      // label: 'Nos coordonnées',
       title: 'Retrouvez-nous',
       items: [
         {
           key: 'email',
           label: 'Email',
-          val: 'sogecop.sarl.bf@gmail.com',
+          val: 'contact.info@sogecop.com',
         },
         {
           key: 'phone',
           label: 'Téléphone',
-          val: '+226 55 08 86 36',
+          val: '+226 55 08 86 36 / 70 61 94 24 / 58 52 58 87',
         },
         {
           key: 'address',
           label: 'Adresse',
-          val: 'Rue du 17 Octobre, Bd Muammar Kaddafi\nOuaga 2000, Burkina Faso',
+          val: 'Rue du 17 Octobre, bvld Muammar Kaddafi\nOuaga 2000, Burkina Faso',
         },
         {
           key: 'hours',
@@ -42,7 +42,7 @@ export const CONTACT_CONTENT = {
       title: 'Demande de renseignements',
       nom:     { label: 'Nom complet',      placeholder: 'Votre nom' },
       email:   { label: 'Email',            placeholder: 'votre@email.com' },
-      service: { label: 'Service concerné', options: ['Imprimerie Générale', 'Fournitures informatiques', 'Négoce International', 'Aménagement'] },
+      service: { label: 'Service concerné', options: ['Production et Imprimerie Numérique', 'Fournitures de consommables & Matériels informatiques', 'Négoce International', 'Aménagement'] },
       message: { label: 'Message',          placeholder: 'Décrivez brièvement votre besoin' },
       submit: 'Envoyer via WhatsApp',
       required: 'Veuillez remplir tous les champs.',
@@ -52,7 +52,7 @@ export const CONTACT_CONTENT = {
       label: 'Localisation',
       title: 'Où nous trouver',
       address: 'Rue du 17 Octobre, Bd Muammar Kaddafi, Ouaga 2000, Ouagadougou, Burkina Faso',
-      mapsLink: 'https://maps.google.com/?q=Ouaga+2000+Ouagadougou+Burkina+Faso',
+      mapsLink: "https://maps.app.goo.gl/MDJv3rcSaRWPbdW1A",
       mapsBtn: 'Ouvrir dans Google Maps',
     },
   },
@@ -79,12 +79,12 @@ export const CONTACT_CONTENT = {
         {
           key: 'phone',
           label: 'Phone',
-          val: '+226 55 08 86 36',
+          val: '+226 55 08 86 36 / 70 61 94 24 / 58 52 58 87',
         },
         {
           key: 'address',
           label: 'Address',
-          val: 'Rue du 17 Octobre, Bd Muammar Kaddafi\nOuaga 2000, Burkina Faso',
+          val: 'Rue du 17 Octobre, bvld Muammar Kaddafi\nOuaga 2000, Burkina Faso',
         },
         {
           key: 'hours',

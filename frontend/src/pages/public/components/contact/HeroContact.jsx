@@ -11,7 +11,7 @@ export default function HeroContact({ t }) {
         <div className={styles.breadcrumb}>
           <Link to="/" className={styles.breadcrumbLink}>{t.breadcrumbHome}</Link>
           <span className={styles.breadcrumbSep}>›</span>
-          <span>{t.pageLabel}</span>
+          <span className={styles.breadcrumbCurrent}>{t.pageLabel}</span>
         </div>
         <div className={styles.heroLabel}>{t.hero.label}</div>
         <h1 className={styles.heroTitle}>{t.hero.title}</h1>

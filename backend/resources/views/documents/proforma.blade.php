@@ -6,7 +6,7 @@
 <title>Pro Forma {{ $reference }}</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'DejaVu Sans', sans-serif; font-size: 8pt; color: #1a1a1a; }
+  body { font-family: 'DejaVu Sans', sans-serif; font-size: 10pt; color: #1a1a1a; }
 
   /* ── HEADER LOGO ── */
   .logo-wrap {
@@ -17,8 +17,8 @@
     margin-bottom: 8px;
   }
   .logo-wrap img { width: 100%; max-height: 60px; object-fit: contain; }
-  .logo-fallback { font-size: 13pt; font-weight: bold; color: #1a5c2a; letter-spacing: 2px; }
-  .logo-fallback-sub { font-size: 6pt; color: #888; }
+  .logo-fallback { font-size: 15pt; font-weight: bold; color: #1a5c2a; letter-spacing: 2px; }
+  .logo-fallback-sub { font-size: 8pt; color: #888; }
 
   /* ── TITRE ── */
   .titre-bar { width: 100%; background: #1a5c2a; margin-bottom: 8px; }
@@ -26,32 +26,32 @@
   /* ── META ── */
   .meta-table { width: 100%; margin-bottom: 8px; }
   .bloc-label {
-    font-size: 6.5pt; font-weight: bold; color: #1a5c2a;
+    font-size: 8.5pt; font-weight: bold; color: #1a5c2a;
     text-transform: uppercase; letter-spacing: 0.8px;
     border-bottom: 1px solid #c8a84b; padding-bottom: 1px;
     margin-bottom: 3px; display: block;
   }
-  .bloc-val { font-size: 7.5pt; line-height: 1.5; color: #222; }
+  .bloc-val { font-size: 9.5pt; line-height: 1.5; color: #222; }
 
   /* ── TABLEAU LIGNES ── */
   .tbl { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
   .tbl thead tr { background: #1a5c2a; }
-  .tbl thead th { color: #fff; padding: 5px 6px; font-size: 7.5pt; font-weight: bold; text-align: left; }
+  .tbl thead th { color: #fff; padding: 5px 6px; font-size: 9.5pt; font-weight: bold; text-align: left; }
   .tbl thead th.r { text-align: right; }
   .tbl thead th.c { text-align: center; }
   .tbl tbody tr { border-bottom: 1px solid #e8e8e8; }
   .tbl tbody tr.alt { background: #f8f6f0; }
-  .tbl tbody td { padding: 4px 6px; font-size: 7.5pt; }
+  .tbl tbody td { padding: 4px 6px; font-size: 9.5pt; }
   .tbl tbody td.r { text-align: right; }
-  .tbl tbody td.c { text-align: center; color: #999; font-size: 7pt; }
+  .tbl tbody td.c { text-align: center; color: #999; font-size: 9pt; }
 
   /* ── CALCULS ── */
   .calc-tbl { width: 46%; border-collapse: collapse; margin-left: auto; margin-bottom: 8px; }
-  .calc-tbl td { padding: 3px 8px; font-size: 7.5pt; border-bottom: 1px solid #eee; }
+  .calc-tbl td { padding: 3px 8px; font-size: 9.5pt; border-bottom: 1px solid #eee; }
   .calc-tbl td.lbl { color: #1a5c2a; }
   .calc-tbl td.val { text-align: right; font-weight: bold; }
-  .r-ttc td { background: #1a5c2a; color: #ffffff; font-size: 9pt; font-weight: bold; padding: 5px 8px; border: none; }
-  .r-ttc td.val { color: #c8a84b; }
+  .r-ttc td { background: #1a5c2a; color: #ffffff; font-size: 11pt; font-weight: bold; padding: 5px 8px; border: none; }
+  .r-ttc td.val { color: #ffffff; }
   .r-ttc td.lbl { color: #ffffff; }
   .r-ac td { background: #f0f7f2; }
   .r-rp td { background: #fdf8ee; }
@@ -62,15 +62,22 @@
     width: 100%; border-left: 2px solid #c8a84b;
     border-top: 1px solid #e0d5b0; border-right: 1px solid #e0d5b0; border-bottom: 1px solid #e0d5b0;
     padding: 6px 10px; margin-bottom: 10px;
-    font-size: 7pt; color: #555; line-height: 1.6; background: #fdfaf4;
+    font-size: 9pt; color: #555; line-height: 1.6; background: #fdfaf4;
   }
-  .cond-titre { font-weight: bold; color: #1a5c2a; font-size: 7.5pt; }
+  .cond-titre { font-weight: bold; color: #1a5c2a; font-size: 9.5pt; }
 
-  /* ── SIGNATURES ── */
-  .sig-tbl { width: 100%; margin-top: 350px; }
+  /* ── SIGNATURES (écrites séparément par le contrôleur, voir partials/proforma_signature) ── */
+  .sig-fixed {
+    position: fixed;
+    bottom: 0mm;
+    left: 0mm;
+    width: 100%;
+  }
+  .sig-tbl { width: 100%; }
 </style>
 </head>
 <body>
+
 <div>
 
   <!-- HEADER LOGO -->
@@ -87,8 +94,8 @@
   <table class="titre-bar" cellpadding="0" cellspacing="0">
     <tr>
       <td style="text-align:center; padding:6px 0 4px;">
-        <span style="font-size:12pt; font-weight:bold; letter-spacing:2px; color:#fff;">FACTURE PRO FORMA {{ $reference }}</span><br>
-        <span style="color:#c8a84b; font-size:7pt;">
+        <span style="font-size:14pt; font-weight:bold; letter-spacing:2px; color:#fff;">FACTURE PRO FORMA {{ $reference }}</span><br>
+        <span style="color:#fff; font-size:9pt;">
           {{-- {{ $reference }} &nbsp;|&nbsp;  --}}
           Émis le {{ now()->locale('fr')->isoFormat('D MMMM YYYY') }}
         </span>
@@ -172,7 +179,7 @@
     </tr>
     @endif
     <tr class="r-ttc">
-      <td class="lbl">TOTAL TTC</td>
+      <td class="lbl">TOTAL {{ $calculs['tva_applicable'] ? 'TTC' : 'HT' }}</td>
       <td class="val">{{ number_format($calculs['total_ttc'], 0, ',', ' ') }} F CFA</td>
     </tr>
     @if($calculs['acompte_montant'] > 0)
@@ -193,40 +200,14 @@
     <tr>
       <td class="cond-box">
         <span class="cond-titre">Conditions</span><br>
-        @if($commande->service === 'IMPRIMERIE')
-          Condition 1 : Délai de production et de réception 01–20 jours à compter de la validation de la maquette.<br>
-          Condition 2 : Paiement préalable d'un acompte de 70% si le montant TTC excède 200 000 F CFA et 30% à la réception. Cas échéant, 50% à la commande et 50% à la réception.<br>
-        @else
-          {!! nl2br(e($conditions)) !!}<br>
-        @endif
+        {!! nl2br(e($conditions)) !!}<br>
         <strong>Ce pro forma est valable {{ $validite }} à compter de la date d'émission.</strong>
       </td>
     </tr>
   </table>
   @endif
 
-  <!-- SIGNATURES -->
-  <table class="sig-tbl" cellpadding="0" cellspacing="0">
-    <tr>
-      <td style="width:50%; text-align:center; vertical-align:bottom;">
-        <table style="width:100%;" cellpadding="0" cellspacing="0">
-          <tr><td style="text-align:center; font-size:7pt; font-weight:bold; color:#1a5c2a; text-transform:uppercase; padding-bottom:4px;">Le client</td></tr>
-          <tr><td style="text-align:center; font-size:7.5pt; color:#333; height:40px; vertical-align:bottom;">{{ $commande->client->nom_complet }}</td></tr>
-        </table>
-      </td>
-      <td style="width:50%; text-align:center; vertical-align:bottom;">
-        <table style="width:100%;" cellpadding="0" cellspacing="0">
-          <tr><td style="text-align:center; font-size:7pt; font-weight:bold; color:#1a5c2a; text-transform:uppercase; padding-bottom:4px;">Le responsable</td></tr>
-          <tr><td style="text-align:center; font-size:7.5pt; color:#333; height:40px; vertical-align:bottom;">
-            @if(!empty($commande->agent))
-              {{ $commande->agent->prenom ?? '' }} {{ $commande->agent->nom ?? '' }}
-            @endif
-          </td></tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-
 </div>
+
 </body>
 </html>

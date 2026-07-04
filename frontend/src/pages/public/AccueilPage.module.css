@@ -53,7 +53,7 @@
 }
 
 .sectionBody {
-  font-size: 13px;
+  font-size: 15px;
   color: var(--text-muted);
   line-height: 1.8;
   max-width: 520px;
@@ -167,11 +167,12 @@
 .heroSpan { color: #c8e6a0; }
 
 .heroSub {
-  font-size: 14px;
+  font-size: 15px;
   color: rgba(255,255,255,0.72);
   line-height: 1.7;
   max-width: 420px;
   margin-bottom: 28px;
+  font-weight: 500;
 }
 
 /* Boutons */
@@ -223,7 +224,7 @@
   padding-left: 12px;
 }
 .statNum {
-  font-family: 'Playfair Display', serif;
+  /* font-family: 'Playfair Display', serif; */
   font-size: 22px;
   color: #fff;
   font-weight: 600;
@@ -233,13 +234,12 @@
 /* Visual (bloc domaines) */
 .heroVisual {
   z-index: 1;
-  background: rgba(255,255,255,0.07);
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 12px;
-  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   min-width: 220px;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  background: radial-gradient(circle, rgba(255,255,255,0.07) 0%, transparent 70%);
+  /* pas de border, pas de border-radius carré */
 }
 
 /* Pills */
@@ -291,8 +291,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: 490px;
   width: 100%;
+  max-width: 480px;
   margin: 0 auto;
 }
 .aboutPartenairesLabel {
@@ -390,7 +390,7 @@
 .svcCardBody { padding: 12px 16px; background: var(--white); }
 
 .svcItem {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--text-muted);
   padding: 4px 0;
   border-bottom: 0.5px solid #f0ede8;
@@ -423,6 +423,15 @@
   color: var(--text-muted);
   font-weight: 500;
   margin-bottom: 10px;
+}
+
+.svcCardImg {
+  width: 100%;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 6px 6px 0 0;
+  margin-bottom: 8px;
+  opacity: 0.85;
 }
 
 
@@ -469,7 +478,13 @@
 .assocCard:hover .assocCardNum { color: rgba(201,168,76,0.5); }
 
 .assocCardLabel { font-size: 13px; font-weight: 500; color: #fff; margin-bottom: 4px; }
-.assocCardSub   { font-size: 12px; color: rgba(255,255,255,0.55); line-height: 1.5; }
+.assocCardSub   { font-size: 13px; color: rgba(255,255,255,0.55); line-height: 1.5; }
+
+.assocCarousel {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+}
 
 
 /* ══════════════════════════════════════════════════════════════
@@ -505,7 +520,7 @@
   transition: color 220ms;
 }
 .fournRegionCard:hover .fournRegionName { color: var(--green-mid); }
-.fournRegionDesc { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+.fournRegionDesc { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
 
 .fournRight {}
 

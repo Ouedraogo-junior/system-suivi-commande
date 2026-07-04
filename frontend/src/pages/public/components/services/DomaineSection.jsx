@@ -42,11 +42,24 @@ export default function DomaineSection({ domaine, index, icon, color, lang }) {
         ))}
 
         <div className={styles.catVisual}>
-          <div className={styles.catVisualInner}>
-            <div className={styles.catVisualIcon} style={{ color }}>{icon}</div>
-            <span className={styles.catVisualLabel}>{domaine.title}</span>
-            <span className={styles.catVisualSub}>{lang === 'fr' ? 'Photo à intégrer' : 'Photo to add'}</span>
-          </div>
+          {domaine.img
+            ? (
+              <img
+                src={domaine.img}
+                alt={domaine.title}
+                className={styles.catVisualImg}
+              />
+            )
+            : (
+              <div className={styles.catVisualInner}>
+                <div className={styles.catVisualIcon} style={{ color }}>{icon}</div>
+                <span className={styles.catVisualLabel}>{domaine.title}</span>
+                <span className={styles.catVisualSub}>
+                  {lang === 'fr' ? 'Photo à intégrer' : 'Photo to add'}
+                </span>
+              </div>
+            )
+          }
         </div>
       </div>
     </section>

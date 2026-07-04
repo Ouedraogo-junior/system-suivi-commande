@@ -8,6 +8,8 @@ export default function LoginPage() {
   const [form, setForm]   = useState({ pseudo: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [logoError, setLogoError] = useState(false);
 
   // Redirection si déjà connecté
   useEffect(() => {
@@ -40,8 +42,17 @@ export default function LoginPage() {
 
         {/* Logo / En-tête */}
         <div style={styles.header}>
-          <div style={styles.logo}>S</div>
-          <h1 style={styles.title}>SOGECOP</h1>
+          {!logoError ? (
+            <img
+              src="/images/logo.png"
+              alt="SOGECOP"
+              style={styles.logoImg}
+              onError={() => setLogoError(true)}
+            />
+          ) : (
+            <div style={styles.logo}>S</div>
+          )}
+          {/* <h1 style={styles.title}>SOGECOP</h1> */}
           <p style={styles.subtitle}>Espace de gestion interne</p>
         </div>
 
@@ -63,16 +74,39 @@ export default function LoginPage() {
 
           <div style={styles.field}>
             <label style={styles.label}>Mot de passe</label>
-            <input
-              type="password"
-              name="password"
-              value={form.password}
-              onChange={handleChange}
-              placeholder="••••••••"
-              style={styles.input}
-              autoComplete="current-password"
-              required
-            />
+            <div style={styles.passwordWrapper}>
+              <input
+                type={showPassword ? 'text' : 'password'}
+                name="password"
+                value={form.password}
+                onChange={handleChange}
+                placeholder="••••••••"
+                style={styles.passwordInput}
+                autoComplete="current-password"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                style={styles.toggleBtn}
+                aria-label={showPassword ? 'Cacher le mot de passe' : 'Afficher le mot de passe'}
+                tabIndex={-1}
+              >
+                {showPassword ? (
+                  // Icône "œil barré" (masquer)
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a18.5 18.5 0 0 1 5.06-5.94M9.9 4.24A10.94 10.94 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                    <line x1="1" y1="1" x2="23" y2="23" />
+                  </svg>
+                ) : (
+                  // Icône "œil" (afficher)
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                )}
+              </button>
+            </div>
           </div>
 
           {error && (
@@ -133,12 +167,12 @@ const styles = {
     justifyContent: 'center',
     margin: '0 auto 0.8rem',
   },
-  title: {
-    fontSize: '1.5rem',
-    fontWeight: '700',
-    color: 'var(--green-dark)',
-    letterSpacing: '0.05em',
-  },
+  // title: {
+  //   fontSize: '1.5rem',
+  //   fontWeight: '700',
+  //   color: 'var(--green-dark)',
+  //   letterSpacing: '0.05em',
+  // },
   subtitle: {
     fontSize: '0.9rem',
     color: 'var(--text-muted)',
@@ -169,6 +203,38 @@ const styles = {
     outline: 'none',
     transition: 'border-color 0.2s ease',
   },
+  passwordWrapper: {
+    position: 'relative',
+    display: 'flex',
+    alignItems: 'center',
+  },
+  passwordInput: {
+    width: '100%',
+    padding: '0.65rem 2.6rem 0.65rem 0.9rem',
+    borderRadius: '8px',
+    border: '1.5px solid #d1d5db',
+    fontSize: '0.95rem',
+    color: 'var(--text-dark)',
+    backgroundColor: 'var(--white)',
+    outline: 'none',
+    transition: 'border-color 0.2s ease',
+    boxSizing: 'border-box',
+  },
+  toggleBtn: {
+    position: 'absolute',
+    right: '0.7rem',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    background: 'none',
+    border: 'none',
+    padding: 0,
+    margin: 0,
+    cursor: 'pointer',
+    color: 'var(--text-muted)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   error: {
     backgroundColor: '#fef2f2',
     border: '1px solid #fca5a5',
@@ -190,4 +256,11 @@ const styles = {
     color: 'var(--text-muted)',
     marginTop: '2rem',
   },
+  logoImg: {
+  width: '300px',
+  height: '150px',
+  objectFit: 'contain',
+  margin: '0 auto 0.8rem',
+  display: 'block',
+},
 };

@@ -11,7 +11,7 @@ export default function HeroServices({ t, activeTab, domainIcons, onTabClick }) 
         <div className={styles.breadcrumb}>
           <Link to="/" className={styles.breadcrumbLink}>{t.breadcrumbHome}</Link>
           <span className={styles.breadcrumbSep}>›</span>
-          <span>{t.heroLabel}</span>
+          <span className={styles.breadcrumbCurrent}>{t.heroLabel}</span>
         </div>
         <div className={styles.heroLabel}>{t.heroLabel}</div>
         <h1 className={styles.heroTitle}>{t.heroTitle}</h1>

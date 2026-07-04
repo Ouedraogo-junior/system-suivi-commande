@@ -11,6 +11,7 @@ const SERVICES = [
 export default function ParametresSection({
   service,        onServiceChange,
   remise,         onRemiseChange,
+  remiseType,     onRemiseTypeChange,
   tva,            onTvaChange,
   tvaTaux,        onTvaTauxChange,
   dateEcheance,   onDateEcheanceChange,
@@ -32,13 +33,27 @@ export default function ParametresSection({
         </div>
 
         <div className={styles.fgroup}>
-          <label className={styles.flabel}>Remise (%)</label>
-          <input
-            className={styles.finput}
-            type="number" min="0" max="100" placeholder="0"
-            value={remise}
-            onChange={e => onRemiseChange(e.target.value)}
-          />
+          <label className={styles.flabel}>Remise</label>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <input
+              className={styles.finput}
+              type="number"
+              min="0"
+              max={remiseType === 'PERCENT' ? 100 : undefined}
+              step={remiseType === 'PERCENT' ? '1' : '0.01'}
+              placeholder="0"
+              value={remise}
+              onChange={e => onRemiseChange(e.target.value)}
+            />
+            <select
+              className={styles.fselect}
+              value={remiseType}
+              onChange={e => onRemiseTypeChange(e.target.value)}
+            >
+              <option value="PERCENT">%</option>
+              <option value="MONTANT">Montant</option>
+            </select>
+          </div>
         </div>
 
         <div className={styles.fgroup}>

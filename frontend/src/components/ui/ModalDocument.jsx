@@ -5,6 +5,12 @@ import ParamsOnglet from './modaldocument/ParamsOnglet';
 import ApercuOnglet from './modaldocument/ApercuOnglet';
 import styles from './ModalDocument.module.css';
 
+const TITRES = {
+  PRO_FORMA:     '📄 Générer un pro forma',
+  FACTURE:       '🧾 Générer la facture définitive',
+  BON_LIVRAISON: '📦 Générer un bon de livraison',
+};
+
 export default function ModalDocument({ commande, type, onClose }) {
   const modal = useDocumentModal(commande, type, onClose);
 
@@ -14,9 +20,7 @@ export default function ModalDocument({ commande, type, onClose }) {
 
         {/* Header */}
         <div className={styles.modalHead}>
-          <div className={styles.modalTitle}>
-            {modal.isProforma ? '📄 Générer un pro forma' : '🧾 Générer la facture définitive'}
-          </div>
+          <div className={styles.modalTitle}>{TITRES[type]}</div>
           <button className={styles.closeBtn} onClick={onClose}>×</button>
         </div>
 
@@ -41,10 +45,13 @@ export default function ModalDocument({ commande, type, onClose }) {
           <ParamsOnglet
             commande={commande}
             isProforma={modal.isProforma}
+            isFacture={modal.isFacture}
+            isBonLiv={modal.isBonLiv}
             isImprimerie={modal.isImprimerie}
             tvaTaux={modal.tvaTaux}
             remiseTaux={modal.remiseTaux}       setRemiseTaux={modal.setRemiseTaux}
             remiseLibre={modal.remiseLibre}     setRemiseLibre={modal.setRemiseLibre}
+            remiseType={modal.remiseType}       setRemiseType={modal.setRemiseType}
             delai={modal.delai}                 setDelai={modal.setDelai}
             delaiLibre={modal.delaiLibre}       setDelaiLibre={modal.setDelaiLibre}
             acompteTaux={modal.acompteTaux}     setAcompteTaux={modal.setAcompteTaux}
@@ -52,38 +59,38 @@ export default function ModalDocument({ commande, type, onClose }) {
             conditions={modal.conditions}       setConditions={modal.setConditions}
             validite={modal.validite}           setValidite={modal.setValidite}
             validiteLibre={modal.validiteLibre} setValiditeLibre={modal.setValiditeLibre}
+            objet={modal.objet}                 setObjet={modal.setObjet}
             remiseFinal={modal.remiseFinal}
             acompteFinal={modal.acompteFinal}
           />
         )}
 
-        {modal.onglet === 'apercu' && (
-          <ApercuOnglet
-            commande={commande}
-            type={type}
-            remiseTaux={modal.remiseFinal}
-            acompteTaux={modal.acompteTaux}
-            acompteFinal={modal.acompteFinal}
-            delai={modal.delaiFinal}
-            tvaTaux={modal.tvaTaux}
-            conditions={modal.conditions}
-            validiteFinal={modal.validiteFinal}
-            isImprimerie={modal.isImprimerie}
-          />
-        )}
+        <ApercuOnglet
+          commande={commande}
+          type={type}
+          remiseTaux={modal.remiseFinal}
+          remiseType={modal.remiseType}
+          remiseLibre={modal.remiseLibre}
+          acompteTaux={modal.acompteTaux}
+          acompteFinal={modal.acompteFinal}
+          delai={modal.delaiFinal}
+          tvaTaux={modal.tvaTaux}
+          conditions={modal.conditions}
+          validiteFinal={modal.validiteFinal}
+          isImprimerie={modal.isImprimerie}
+          objet={modal.objet}
+        />
 
         {/* Footer */}
-        <div className={styles.modalFooter}>
+       <div className={styles.modalFooter}>
           <Button variant="ghost" size="sm" onClick={onClose}>Annuler</Button>
-          <Button
-            variant="primary" size="sm"
-            onClick={modal.handleGenerer}
-            disabled={modal.generating}
-          >
-            {modal.generating ? 'Génération...' : '⬇ Télécharger le PDF'}
+          <Button variant="outline" size="sm" onClick={modal.handleImprimer} disabled={modal.generating}>
+            {modal.generating ? 'Génération...' : '🖨 Imprimer'}
+          </Button>
+          <Button variant="primary" size="sm" onClick={modal.handleTelecharger} disabled={modal.generating}>
+            {modal.generating ? 'Génération...' : '⬇ Télécharger'}
           </Button>
         </div>
-
       </div>
     </div>
   );

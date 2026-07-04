@@ -72,7 +72,7 @@ class DocumentController extends Controller
         }
 
         // Générer PDF
-        $html = view('documents.proforma', [
+        $htmlContenu = view('documents.proforma', [
             'commande'  => $commande,
             'calculs'   => $calculs,
             'reference' => $reference,
@@ -82,20 +82,24 @@ class DocumentController extends Controller
             'document'  => $document,
         ])->render();
 
+        $htmlSignature = view('documents.partials.proforma_signature', [
+            'commande' => $commande,
+        ])->render();
+
         $mpdf = new Mpdf([
             'mode'              => 'utf-8',
             'format'            => 'A4',
-            'margin_top'        => 30,
-            'margin_bottom'     => 20,
+            'margin_top'        => 36,   // 30 → 36 : plus de marge pour le logo
+            'margin_bottom'     => 24,   // 20 → 24 : sécurité pour le footer
             'margin_left'       => 12,
             'margin_right'      => 12,
-            'margin_header'     => 5,
-            'margin_footer'     => 5,
+            'margin_header'     => 9,    // 5 → 9 : hors zone non imprimable
+            'margin_footer'     => 9,    // 5 → 9 : hors zone non imprimable
         ]);
 
         $mpdf->SetHTMLHeader($this->buildHeader($commande));
         $mpdf->SetHTMLFooter($this->buildFooter());
-        $mpdf->WriteHTML($html);
+        $this->ecrireAvecGardeFouSignature($mpdf, $htmlContenu, $htmlSignature);
 
         $chemin = "documents/{$reference}.pdf";
         Storage::put($chemin, $mpdf->Output('', 'S'));
@@ -140,27 +144,31 @@ class DocumentController extends Controller
             $reference = $existant->reference;
         }
 
-        $html = view('documents.facture', [
+        $htmlContenu = view('documents.facture', [
             'commande'  => $commande,
             'calculs'   => $calculs,
             'reference' => $reference,
             'document'  => $document,
         ])->render();
 
+        $htmlSignature = view('documents.partials.proforma_signature', [
+             'commande' => $commande,
+         ])->render();
+
         $mpdf = new Mpdf([
             'mode'              => 'utf-8',
             'format'            => 'A4',
-            'margin_top'        => 30,
-            'margin_bottom'     => 20,
+            'margin_top'        => 36,   // 30 → 36 : plus de marge pour le logo
+            'margin_bottom'     => 24,   // 20 → 24 : sécurité pour le footer
             'margin_left'       => 12,
             'margin_right'      => 12,
-            'margin_header'     => 5,
-            'margin_footer'     => 5,
+            'margin_header'     => 9,    // 5 → 9 : hors zone non imprimable
+            'margin_footer'     => 9,    // 5 → 9 : hors zone non imprimable
         ]);
 
         $mpdf->SetHTMLHeader($this->buildHeader($commande));
         $mpdf->SetHTMLFooter($this->buildFooter());
-        $mpdf->WriteHTML($html);
+        $this->ecrireAvecGardeFouSignature($mpdf, $htmlContenu, $htmlSignature);
 
         $chemin = "documents/{$reference}.pdf";
         Storage::put($chemin, $mpdf->Output('', 'S'));
@@ -170,6 +178,72 @@ class DocumentController extends Controller
             ->header('Content-Type', 'application/pdf')
             ->header('Content-Disposition', "inline; filename=\"{$reference}.pdf\"");
     }
+
+
+    // ─────────────────────────────────────────────────────────────────────────────
+    // MÉTHODE : bonLivraison()
+    // POST /api/commandes/{id}/documents/bon-livraison
+    // ─────────────────────────────────────────────────────────────────────────────
+ 
+    public function bonLivraison(Request $request, Commande $commande)
+    {
+        $this->authorizeCommande($request, $commande);
+    
+        $data = $request->validate([
+            'objet' => 'nullable|string|max:500',
+        ]);
+    
+        $commande->load(['client', 'lignes', 'agent']);
+    
+        $existant = Document::where('commande_id', $commande->id)
+            ->where('type', 'BON_LIVRAISON')
+            ->first();
+    
+        if (!$existant) {
+            $reference = $this->genererReferenceDocument($commande, 'BON_LIVRAISON');
+            $document  = Document::create([
+                'commande_id'    => $commande->id,
+                'agent_id'       => $request->user()->id,
+                'type'           => 'BON_LIVRAISON',
+                'reference'      => $reference,
+                'chemin_fichier' => '',
+            ]);
+        } else {
+            $document  = $existant;
+            $reference = $existant->reference;
+        }
+    
+        $html = view('documents.bon_livraison', [
+            'commande'  => $commande,
+            'reference' => $reference,
+            'objet'     => $data['objet'] ?? null,
+            'document'  => $document,
+        ])->render();
+    
+        $mpdf = new \Mpdf\Mpdf([
+            'mode'          => 'utf-8',
+            'format'        => 'A4',
+            'margin_top'    => 36,
+            'margin_bottom' => 24,
+            'margin_left'   => 12,
+            'margin_right'  => 12,
+            'margin_header' => 9,
+            'margin_footer' => 9,
+        ]);
+    
+        $mpdf->SetHTMLHeader($this->buildHeader($commande));
+        $mpdf->SetHTMLFooter($this->buildFooter());
+        $mpdf->WriteHTML($html);
+    
+        $chemin = "documents/{$reference}.pdf";
+        Storage::put($chemin, $mpdf->Output('', 'S'));
+        $document->update(['chemin_fichier' => $chemin]);
+    
+        return response($mpdf->Output('', 'S'), 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', "inline; filename=\"{$reference}.pdf\"");
+    }
+
 
 
     /**
@@ -234,33 +308,44 @@ class DocumentController extends Controller
 
     private function genererReferenceDocument(Commande $commande, string $type): string
     {
-        $prefixes = [
-            'IMPRIMERIE'  => 'IMP',
-            'INFORMATIQUE'=> 'INFO',
-            'NEGOCE'      => 'NEG',
-            'AMENAGEMENT' => 'AME',
+        $prefixesService = [
+            'IMPRIMERIE'   => 'IMP',
+            'INFORMATIQUE' => 'INFO',
+            'NEGOCE'       => 'NEG',
+            'AMENAGEMENT'  => 'AME',
         ];
-
-        $prefix = $prefixes[$commande->service] ?? 'DOC';
-        $mois   = strtoupper(now()->locale('fr')->isoFormat('MMM'));
-        $annee  = now()->year;
-
-        // Compter tous les documents du même type+service+mois, pas seulement via commande
+    
+        $prefixesType = [
+            'PRO_FORMA'    => '',      // pas de préfixe type pour pro forma et facture
+            'FACTURE'      => '',
+            'BON_LIVRAISON'=> 'BL',
+        ];
+    
+        $servicePrefix = $prefixesService[$commande->service] ?? 'DOC';
+        $typePrefix    = $prefixesType[$type] ?? '';
+        $mois          = strtoupper(now()->locale('fr')->isoFormat('MMM'));
+        $annee         = now()->year;
+    
+        // Construire le préfixe complet : IMP-BL-MAI ou IMP-MAI
+        $prefix = $typePrefix
+            ? "{$servicePrefix}-{$typePrefix}-{$mois}"
+            : "{$servicePrefix}-{$mois}";
+    
         $count = Document::where('type', $type)
             ->whereYear('created_at', $annee)
             ->whereMonth('created_at', now()->month)
             ->whereHas('commande', fn($q) => $q->where('service', $commande->service))
             ->count();
-
-        // Boucler jusqu'à trouver une référence disponible
+    
         do {
             $count++;
             $numero    = str_pad($count, 4, '0', STR_PAD_LEFT);
-            $reference = "{$prefix}-{$mois}-{$numero}";
+            $reference = "{$prefix}-{$numero}";
         } while (Document::where('reference', $reference)->exists());
-
+    
         return $reference;
     }
+
 
     private function authorizeCommande(Request $request, Commande $commande): void
     {
@@ -272,18 +357,18 @@ class DocumentController extends Controller
     private function buildHeader(Commande $commande): string
     {
         $logoPath = public_path('images/logo_large.png');
-    
+
         if (file_exists($logoPath)) {
-            $logoHtml = '<img src="' . $logoPath . '" style="width:300%; max-height:90px; object-fit:contain;">';
+            $logoHtml = '<img src="' . $logoPath . '" style="width:100%; max-height:70px; object-fit:contain;">';
         } else {
             $logoHtml = '
                 <div style="font-size:13pt; font-weight:bold; color:#1a5c2a; letter-spacing:2px;">SOGECOP</div>
                 <div style="font-size:6pt; color:#888;">Société Générale de Commerce et de Prestations</div>';
         }
-    
+
         return '
         <div style="
-            width: 300%;
+            width: 100%;
             text-align: center;
             border-bottom: 2px solid #1a5c2a;
             padding-bottom: 6px;
@@ -293,11 +378,20 @@ class DocumentController extends Controller
         </div>';
     }
 
-
     private function buildFooter(): string
     {
         return '
-        <div style="background:#1a5c2a; color:#fff; text-align:center; padding:4px 8px; font-size:6.5pt; line-height:1.5; border-top:2px solid #c8a84b;">
+        <div style="
+            width: 100%;
+            background:#1a5c2a;
+            color:#fff;
+            text-align:center;
+            padding:4px 8px;
+            font-size:6.5pt;
+            line-height:1.5;
+            border-top:2px solid #c8a84b;
+            box-sizing: border-box;
+        ">
         Adresse : Rue du 17 Octobre, Bld Muammar Kaddafi, 11 BP 268 OUAGA 11, Ouaga 2000, Burkina Faso
         &nbsp;|&nbsp; Tél : (+226) 55 08 86 36 / 70 51 13 84
         &nbsp;|&nbsp; <span style="color:#c8a84b;">sogecop.sarl.bf@gmail.com</span>
@@ -305,4 +399,36 @@ class DocumentController extends Controller
         &nbsp;|&nbsp; Page {PAGENO} / {nbpg}
         </div>';
     }
+
+    /**
+     * Écrit le contenu HTML principal puis le bloc signature, en garantissant
+     * que la signature dispose d'assez de place en bas de la page courante.
+     * Si l'espace restant est insuffisant, force un saut de page avant de
+     * l'écrire (elle est ensuite ancrée en bas de la nouvelle page via
+     * CSS position:fixed défini dans la vue).
+     */
+    private function ecrireAvecGardeFouSignature(Mpdf $mpdf, string $htmlContenu, string $htmlSignature): void
+    {
+        // 1. Écrire le contenu principal
+        $mpdf->WriteHTML($htmlContenu);
+
+        // 2. Mesurer la hauteur réelle du bloc signature (mPDF ≥ 6.1)
+        //    Marge de sécurité de 5mm en plus de la mesure.
+        $hauteurSignature = 30.0; // valeur de repli si _getHtmlHeight indisponible
+        if (method_exists($mpdf, '_getHtmlHeight')) {
+            $hauteurSignature = $mpdf->_getHtmlHeight($htmlSignature) + 5;
+        }
+
+        // 3. Espace restant sur la page courante avant la marge basse
+        $espaceRestant = $mpdf->h - $mpdf->bMargin - $mpdf->y;
+
+        // 4. Pas assez de place → nouvelle page
+        if ($espaceRestant < $hauteurSignature) {
+            $mpdf->AddPage();
+        }
+
+        // 5. Écrire la signature
+        $mpdf->WriteHTML($htmlSignature);
+    }
+    
 }

@@ -1,11 +1,16 @@
 // src/pages/public/ServicesPage.jsx
-import { useState }                              from 'react';
-import { Link, useOutletContext }                from 'react-router-dom';
+import { useState, useEffect }                            from 'react';
+import { Link, useOutletContext, useLocation }            from 'react-router-dom';
 import { SERVICES_CONTENT, GALERIE_ITEMS, DOMAIN_COLORS } from './data/services.data';
-import HeroServices                             from './components/services/HeroServices';
-import DomaineSection                           from './components/services/DomaineSection';
-import GalerieServices                          from './components/services/GalerieServices';
-import styles                                   from './ServicesPage.module.css';
+import HeroServices                                       from './components/services/HeroServices';
+import DomaineSection                                     from './components/services/DomaineSection';
+import GalerieServices                                    from './components/services/GalerieServices';
+import styles                                             from './ServicesPage.module.css';
+import './ServicesPage.animations.css';
+import { useScrollReveal } from '../../hooks/useScrollReveal';
+
+// IDs dans le même ordre que les domaines
+const DOMAIN_IDS = ['imprimerie', 'informatique', 'negoce', 'amenagement'];
 
 // ─── Icônes ──────────────────────────────────────────────────
 const DOMAIN_ICONS = [
@@ -21,7 +26,29 @@ const IconArrow = <svg width="16" height="16" fill="none" stroke="currentColor" 
 export default function ServicesPage() {
   const { lang } = useOutletContext();
   const t = SERVICES_CONTENT[lang];
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState(0);
+
+  useScrollReveal();
+
+  // Scroll vers la section ciblée par le hash (venant de la roue ou d'un lien direct)
+  useEffect(() => {
+    if (!location.hash) return;
+
+    const id    = location.hash.replace('#', '');
+    const index = DOMAIN_IDS.indexOf(id);
+
+    // Petit délai pour laisser le DOM se peindre
+    const t = setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (index !== -1) setActiveTab(index);
+      }
+    }, 120);
+
+    return () => clearTimeout(t);
+  }, [location.hash]);
 
   function handleTabClick(index, id) {
     setActiveTab(index);
@@ -30,7 +57,6 @@ export default function ServicesPage() {
 
   return (
     <div className={styles.page}>
-
       <HeroServices
         t={t}
         activeTab={activeTab}
@@ -53,17 +79,16 @@ export default function ServicesPage() {
       <GalerieServices t={t} items={GALERIE_ITEMS} lang={lang} />
 
       {/* ── CTA ── */}
-      <section className={styles.cta}>
+      <section className={`${styles.cta} revealUp`} data-reveal>
         <div className={styles.ctaInner}>
           <h2 className={styles.ctaTitle}>{t.ctaTitle}</h2>
           <p className={styles.ctaSub}>{t.ctaSub}</p>
-          <Link to="/public/contact" className={styles.ctaBtn}>
+          <Link to="/contact" className={styles.ctaBtn}>
             {t.ctaBtn}
             <span className={styles.ctaBtnArrow}>{IconArrow}</span>
           </Link>
         </div>
       </section>
-
     </div>
   );
 }

@@ -25,65 +25,57 @@
 
 /* ══════════════════════════════════════════════════════════════
    SECTEURS — état initial (masqués)
-   Chaque secteur entre depuis sa direction naturelle
 ══════════════════════════════════════════════════════════════ */
 .sector {
   opacity: 0;
-  /* Pas de transform par défaut — c'est l'animation qui définit le départ */
 }
 
-/* Secteur 0 : Haut-droit → entre depuis le coin haut-droit */
+/* Délais échelonnés — même timing qu'avant */
 .sector0 {
-  animation: enterTopRight 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both;
+  animation: enterTopRight    0.65s cubic-bezier(0.34, 1.56, 0.64, 1) 0.10s both;
 }
-
-/* Secteur 1 : Bas-droit → entre depuis le coin bas-droit */
 .sector1 {
   animation: enterBottomRight 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) 0.28s both;
 }
-
-/* Secteur 2 : Bas-gauche → entre depuis le coin bas-gauche */
 .sector2 {
-  animation: enterBottomLeft 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) 0.46s both;
+  animation: enterBottomLeft  0.65s cubic-bezier(0.34, 1.56, 0.64, 1) 0.46s both;
 }
-
-/* Secteur 3 : Haut-gauche → entre depuis le coin haut-gauche */
 .sector3 {
-  animation: enterTopLeft 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) 0.64s both;
+  animation: enterTopLeft     0.65s cubic-bezier(0.34, 1.56, 0.64, 1) 0.64s both;
 }
 
-/* ── Keyframes par direction ── */
+/* ── Keyframes ── */
 @keyframes enterTopRight {
-  0%   { opacity: 0; transform: translate(28px, -28px) scale(0.7); }
+  0%   { opacity: 0; transform: translate(32px, -32px) scale(0.7); }
   60%  { opacity: 1; }
   100% { opacity: 1; transform: translate(0, 0) scale(1); }
 }
 
 @keyframes enterBottomRight {
-  0%   { opacity: 0; transform: translate(28px, 28px) scale(0.7); }
+  0%   { opacity: 0; transform: translate(32px, 32px) scale(0.7); }
   60%  { opacity: 1; }
   100% { opacity: 1; transform: translate(0, 0) scale(1); }
 }
 
 @keyframes enterBottomLeft {
-  0%   { opacity: 0; transform: translate(-28px, 28px) scale(0.7); }
+  0%   { opacity: 0; transform: translate(-32px, 32px) scale(0.7); }
   60%  { opacity: 1; }
   100% { opacity: 1; transform: translate(0, 0) scale(1); }
 }
 
 @keyframes enterTopLeft {
-  0%   { opacity: 0; transform: translate(-28px, -28px) scale(0.7); }
+  0%   { opacity: 0; transform: translate(-32px, -32px) scale(0.7); }
   60%  { opacity: 1; }
   100% { opacity: 1; transform: translate(0, 0) scale(1); }
 }
 
 
 /* ══════════════════════════════════════════════════════════════
-   SECTEUR — scale au hover (transformOrigin = centre du disque)
+   SECTEUR — scale au hover
 ══════════════════════════════════════════════════════════════ */
 .sectorPath {
   transition: fill 160ms ease, transform 220ms cubic-bezier(0.34, 1.56, 0.64, 1);
-  transform-box: fill-box;       /* garantit que transformOrigin = centre du path */
+  transform-box: fill-box;
   transform-origin: center;
 }
 
@@ -96,30 +88,30 @@
    ÉLÉMENTS FIXES — entrées après les secteurs
 ══════════════════════════════════════════════════════════════ */
 .centerCircle {
-  transform-origin: 150px 150px;
+  transform-origin: 180px 180px;
   animation: centerPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.05s both;
 }
 
 .centerRing {
-  transform-origin: 150px 150px;
+  transform-origin: 180px 180px;
   opacity: 0;
   animation: fadein 0.5s ease-out 0.85s both;
 }
 
 .centerText {
   opacity: 0;
-  animation: fadein 0.45s ease-out 0.2s both;
+  animation: fadein 0.45s ease-out 0.9s both;
 }
 
 .outerRing {
   opacity: 0;
-  animation: fadein 0.6s ease-out 0.9s both;
+  animation: fadein 0.6s ease-out 0.95s both;
 }
 
 @keyframes centerPop {
   0%   { transform: scale(0); opacity: 0; }
   70%  { transform: scale(1.08); opacity: 1; }
-  100% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(1);   opacity: 1; }
 }
 
 @keyframes fadein {
@@ -136,45 +128,21 @@
 }
 
 @keyframes dotPop {
-  0%   { r: 0; opacity: 0; }
-  100% { r: 3; opacity: 0.9; }
+  0%   { r: 0;   opacity: 0; }
+  100% { r: 3.5; opacity: 0.9; }
 }
 
 
 /* ══════════════════════════════════════════════════════════════
-   UI — label actif & replay
+   LABEL ACTIF
 ══════════════════════════════════════════════════════════════ */
 .activeLabel {
-  font-size: 13px;
-  font-weight: 600;
   font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
   color: rgba(255, 255, 255, 0.85);
-  letter-spacing: 0.3px;
   height: 20px;
   text-align: center;
-  text-transform: uppercase;
-  font-size: 11px;
-  letter-spacing: 1px;
-}
-
-.replayBtn {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: rgba(255, 255, 255, 0.45);
-  font-size: 11px;
-  font-family: 'DM Sans', sans-serif;
-  padding: 4px 14px;
-  border-radius: 20px;
-  cursor: pointer;
-  transition: border-color 150ms ease, color 150ms ease, transform 150ms ease;
-}
-
-.replayBtn:hover {
-  border-color: rgba(255, 255, 255, 0.5);
-  color: rgba(255, 255, 255, 0.85);
-  transform: scale(1.05);
-}
-
-.replayBtn:active {
-  transform: scale(0.97);
 }

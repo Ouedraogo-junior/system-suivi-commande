@@ -218,11 +218,14 @@ export default function FournGlobe({ suppliers = SUPPLIERS_DEFAULT }) {
       const onUp    = ()  => { S.isDragging = false; };
 
       const onTouchStart = (e) => { S.lastX = e.touches[0].clientX; };
-      const onTouchMove  = (e) => {
-        e.preventDefault();
+      const onTouchMove = (e) => {
         const dx = e.touches[0].clientX - S.lastX;
+        const dy = e.touches[0].clientY - (S.lastY ?? e.touches[0].clientY);
+        if (Math.abs(dx) < Math.abs(dy)) return; // scroll vertical → on laisse passer
+        e.preventDefault();
         S.rotate[0] += dx * 0.35;
         S.lastX = e.touches[0].clientX;
+        S.lastY = e.touches[0].clientY;
         projection.rotate(S.rotate);
       };
 
