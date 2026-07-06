@@ -17,9 +17,12 @@ export function ClientCard({ commande }) {
           {commande.client?.telephone && (
             <div className={styles.clientSub}>{commande.client.telephone}</div>
           )}
-          {commande.client?.email && (
-            <div className={styles.clientSub}>{commande.client.email}</div>
+          {commande.client?.fax && (
+            <div className={styles.clientSub}>Fax : {commande.client.fax}</div>
           )}
+          {/* {commande.client?.email && (
+            <div className={styles.clientSub}>{commande.client.email}</div>
+          )} */}
         </div>
       </div>
     </Section>

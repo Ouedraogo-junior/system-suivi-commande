@@ -68,16 +68,13 @@ const ICONS = [
 // Labels sur 3 lignes max — textes réels
 const LABELS = [
   ['Production &', 'Imprimerie', 'Numérique'],
-  ['Fournitures &', 'Matériels', 'Informatiques'],
+  ['Fournitures', 'de consommables &', 'Matériels', 'Informatiques'],
   ['Négoce', 'International', ''],
   ['Aménagement', 'Intérieur &', 'Extérieur'],
 ];
 
 // Durée totale d'un cycle d'animation (ms) — doit correspondre au CSS
-const CYCLE_MS = 4200; // 0.64s delay dernier secteur + 0.65s durée + marge
-
-const MAX_CYCLES = 2; // ou 1 seul cycle d'entrée, puis stop
-
+const CYCLE_MS = 3600; // 1.29s delay dernier secteur + 0.28s durée + marge
 
 export default function DomainesWheel({ domaines = [], title = '' }) {
   const navigate = useNavigate();
@@ -98,7 +95,6 @@ export default function DomainesWheel({ domaines = [], title = '' }) {
 
 
   useEffect(() => {
-    if (animKey >= MAX_CYCLES) return;
     const tLoop = setTimeout(() => {
       setReady(false);
       setTimeout(() => setAnimKey(k => k + 1), 60);

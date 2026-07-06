@@ -28,11 +28,11 @@ export const ACCUEIL_CONTENT = {
     aboutLink: 'En savoir plus →',
     partenairesLabel: 'Nos partenaires',
     partenaires: [
-      { src: '/partners/shalom.jpeg', alt: 'Shalom Events Planner' },
+      { src: '/partners/Shalom_event.PNG', alt: 'Shalom Events Planner' },
       { src: '/partners/riadel.png', alt: 'RIADEL' },
       { src: '/partners/FasoDev.PNG', alt: 'FasoDev' },
       { src: '/partners/logo_EETTIL.png', alt: 'EETTIL' },
-      { src: '/partners/MAHSN.png', alt: 'Ministère de l’action Humanitaire et et de la Solidarité Nationale' },
+      { src: '/partners/MAHSN.jpeg', alt: 'Ministère de l’action Humanitaire et et de la Solidarité Nationale' },
       { src: '/partners/UBA.png', alt: 'UBA' },
       { src: '/partners/BBI.png', alt: 'BBI' },
       // { src: '/partners/logo_dream_studio.png', alt: 'Dream Studio' },
@@ -69,12 +69,12 @@ export const ACCUEIL_CONTENT = {
       {
         title: 'Fournitures de consommables & Matériels informatiques',
         img: null,
-        items: ['Papiers, toners, cartouches', 'Ordinateurs, imprimantes, copieurs', 'Réseaux & sécurité', 'Onduleurs et équipements réseau'],
+        items: ['Papiers, toners, cartouches', 'Ordinateurs, imprimantes, copieurs', 'Réseaux & sécurité', 'Onduleurs et équipements réseaux'],
       },
       {
         title: 'Négoce International',
         img: null,
-        items: ['Matériaux de construction & BTP', 'Produits alimentaires & matières', 'Fournitures pour marchés publics', 'Fournitures industrielles'],
+        items: ['Matériaux de construction & BTP', 'Produits alimentaires & matières premières', 'Fournitures pour marchés publics', 'Fournitures industrielles'],
       },
       {
         title: 'Aménagement intérieur & extérieur',
@@ -133,11 +133,11 @@ export const ACCUEIL_CONTENT = {
     aboutLink: 'Learn more →',
     partenairesLabel: 'Our partners',
     partenaires: [
-       { src: '/partners/shalom.jpeg', alt: 'Shalom Events Planner' },
+       { src: '/partners/Shalom_event.PNG', alt: 'Shalom Events Planner' },
        { src: '/partners/riadel.png', alt: 'RIADEL' },
        { src: '/partners/FasoDev.PNG', alt: 'FasoDev' },
        { src: '/partners/logo_EETTIL.png', alt: 'EETTIL' },
-       { src: '/partners/MAHSN.png', alt: 'Ministère de l’action Humanitaire et et de la Solidarité Nationale' },
+       { src: '/partners/MAHSN.jpeg', alt: 'Ministère de l’action Humanitaire et et de la Solidarité Nationale' },
        { src: '/partners/UBA.png', alt: 'UBA' },
        { src: '/partners/BBI.png', alt: 'BBI' },
     ],

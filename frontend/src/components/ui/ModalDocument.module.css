@@ -383,3 +383,53 @@
   border-top: 1px solid #eee;
   flex-shrink: 0;
 }
+
+/* Badges statut paiement */
+.badgePaye {
+  background: #d4edda;
+  color: #155724;
+  padding: 1px 6px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 8px;
+}
+
+.badgePartiel {
+  background: #fff3cd;
+  color: #856404;
+  padding: 1px 6px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 8px;
+}
+
+.badgeNon {
+  background: #f8d7da;
+  color: #721c24;
+  padding: 1px 6px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 8px;
+}
+
+/* Titre section versements */
+.apercuSectionLbl {
+  font-size: 8px;
+  font-weight: 700;
+  color: #1a5c2a;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  border-bottom: 1.5px solid #1a5c2a;
+  padding-bottom: 2px;
+  margin-bottom: 5px;
+}
+
+/* Message "aucun versement" */
+.emptyMsg {
+  padding: 8px 10px;
+  background: #f8f6f0;
+  border-left: 2px solid #c8a84b;
+  font-size: 7.5px;
+  color: #666;
+  margin-bottom: 10px;
+}

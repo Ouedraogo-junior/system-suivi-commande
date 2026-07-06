@@ -17,14 +17,23 @@ class ClientController extends Controller
             $q = $request->search;
             $query->where(function ($q2) use ($q) {
                 $q2->where('nom_complet', 'like', "%$q%")
-                   ->orWhere('telephone', 'like', "%$q%")
-                   ->orWhere('email', 'like', "%$q%");
+                ->orWhere('telephone', 'like', "%$q%")
+                ->orWhere('email', 'like', "%$q%");
             });
         }
 
-        return response()->json(
-            $query->orderBy('nom_complet')->paginate(20)
-        );
+        $paginated = $query->orderBy('nom_complet')->paginate(20);
+
+        return response()->json([
+            'data' => $paginated->items(),
+            'meta' => [
+                'total'        => $paginated->total(),
+                'current_page' => $paginated->currentPage(),
+                'last_page'    => $paginated->lastPage(),
+                'from'         => $paginated->firstItem(),
+                'to'           => $paginated->lastItem(),
+            ],
+        ]);
     }
 
     // GET /api/clients/{id}
@@ -43,6 +52,7 @@ class ClientController extends Controller
         $data = $request->validate([
             'nom_complet' => 'required|string|max:150',
             'telephone'   => 'nullable|string|max:30',
+            'fax'         => 'nullable|string|max:30',
             'email'       => 'nullable|email|max:150',
             'adresse'     => 'nullable|string',
         ]);
@@ -58,6 +68,7 @@ class ClientController extends Controller
         $data = $request->validate([
             'nom_complet' => 'sometimes|required|string|max:150',
             'telephone'   => 'nullable|string|max:30',
+            'fax'         => 'nullable|string|max:30',
             'email'       => 'nullable|email|max:150',
             'adresse'     => 'nullable|string',
         ]);

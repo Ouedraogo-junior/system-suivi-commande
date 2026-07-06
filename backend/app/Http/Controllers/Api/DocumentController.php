@@ -323,7 +323,7 @@ class DocumentController extends Controller
     
         $servicePrefix = $prefixesService[$commande->service] ?? 'DOC';
         $typePrefix    = $prefixesType[$type] ?? '';
-        $mois          = strtoupper(now()->locale('fr')->isoFormat('MMM'));
+        $mois          = str_replace('.', '', strtoupper(now()->locale('fr')->isoFormat('MMM')));
         $annee         = now()->year;
     
         // Construire le préfixe complet : IMP-BL-MAI ou IMP-MAI
@@ -407,27 +407,25 @@ class DocumentController extends Controller
      * l'écrire (elle est ensuite ancrée en bas de la nouvelle page via
      * CSS position:fixed défini dans la vue).
      */
-    private function ecrireAvecGardeFouSignature(Mpdf $mpdf, string $htmlContenu, string $htmlSignature): void
+   private function ecrireAvecGardeFouSignature(Mpdf $mpdf, string $htmlContenu, string $htmlSignature): void
     {
-        // 1. Écrire le contenu principal
+        // Hauteur fixe et volontairement généreuse. Le bloc signature (titres +
+        // images plafonnées par max-height + un nom sur une ligne) a un gabarit
+        // borné qui ne dépend pas des données de la commande : pas besoin (et pas
+        // moyen fiable) de le mesurer dynamiquement.
+        // Ancienne approche : $mpdf->_getHtmlHeight() est une méthode interne de
+        // mPDF non documentée publiquement ; elle sous-estimait la hauteur réelle
+        // et empêchait le saut de page de se déclencher à temps.
+        $hauteurSignature = 45.0; // mm — à réajuster si signature.png/cachet.jpeg changent de taille
+
         $mpdf->WriteHTML($htmlContenu);
 
-        // 2. Mesurer la hauteur réelle du bloc signature (mPDF ≥ 6.1)
-        //    Marge de sécurité de 5mm en plus de la mesure.
-        $hauteurSignature = 30.0; // valeur de repli si _getHtmlHeight indisponible
-        if (method_exists($mpdf, '_getHtmlHeight')) {
-            $hauteurSignature = $mpdf->_getHtmlHeight($htmlSignature) + 5;
-        }
-
-        // 3. Espace restant sur la page courante avant la marge basse
         $espaceRestant = $mpdf->h - $mpdf->bMargin - $mpdf->y;
 
-        // 4. Pas assez de place → nouvelle page
         if ($espaceRestant < $hauteurSignature) {
             $mpdf->AddPage();
         }
 
-        // 5. Écrire la signature
         $mpdf->WriteHTML($htmlSignature);
     }
     

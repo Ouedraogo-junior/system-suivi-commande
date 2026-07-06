@@ -32,16 +32,16 @@
 
 /* Délais échelonnés — même timing qu'avant */
 .sector0 {
-  animation: enterTopRight    0.65s cubic-bezier(0.34, 1.56, 0.64, 1) 0.10s both;
+  animation: enterTopRight    0.28s cubic-bezier(0.34, 1.56, 0.64, 1) 0s both;
 }
 .sector1 {
-  animation: enterBottomRight 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) 0.28s both;
+  animation: enterBottomRight 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) 0.43s both;
 }
 .sector2 {
-  animation: enterBottomLeft  0.65s cubic-bezier(0.34, 1.56, 0.64, 1) 0.46s both;
+  animation: enterBottomLeft  0.28s cubic-bezier(0.34, 1.56, 0.64, 1) 0.86s both;
 }
 .sector3 {
-  animation: enterTopLeft     0.65s cubic-bezier(0.34, 1.56, 0.64, 1) 0.64s both;
+  animation: enterTopLeft     0.28s cubic-bezier(0.34, 1.56, 0.64, 1) 1.29s both;
 }
 
 /* ── Keyframes ── */
@@ -89,23 +89,23 @@
 ══════════════════════════════════════════════════════════════ */
 .centerCircle {
   transform-origin: 180px 180px;
-  animation: centerPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.05s both;
+  animation: centerPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) 0.05s both;
 }
 
 .centerRing {
   transform-origin: 180px 180px;
   opacity: 0;
-  animation: fadein 0.5s ease-out 0.85s both;
+  animation: fadein 0.3s ease-out 1.6s both;
 }
 
 .centerText {
   opacity: 0;
-  animation: fadein 0.45s ease-out 0.9s both;
+  animation: fadein 0.28s ease-out 1.65s both;
 }
 
 .outerRing {
   opacity: 0;
-  animation: fadein 0.6s ease-out 0.95s both;
+  animation: fadein 0.35s ease-out 1.7s both;
 }
 
 @keyframes centerPop {

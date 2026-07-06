@@ -22,7 +22,7 @@ export const SERVICES_CONTENT = {
         intro: "Faite bonne impression dès le premier regard ! Grâce à notre expertise et à des équipements de pointe, nous donnons vie à vos supports de communication avec une qualité exceptionnelle et des finitions soignées.",
         categories: [
           { name: 'Impression numérique & Offset',      items: ['Cartes de visite, en-têtes de lettre, enveloppes', 'Brochures, catalogues, livrets reliés', 'Affiches format A0, A1, A2, A3,A4, A5, etc', 'Flyers, dépliants 2 ou 3 volets'] },
-          { name: 'Grands formats & signalétique',       items: ['Bâches publicitaires et banderoles', 'Kakémonos et roll-ups', 'Panneaux rigides (dibond, PVC expansé)', 'Habillage vitrine et véhicule', 'Enceintes et totems lumineux', 'Drapeaux personnalisés'] },
+          { name: 'Grands formats & signalétique',       items: ['Bâches publicitaires et banderoles', 'Kakémonos et roll-ups', 'Panneaux rigides (dibond, PVC expansé)', 'Habillage vitrine et véhicule', 'Enseignes signalétiques et totems lumineux', 'Drapeaux personnalisés'] },
           { name: 'Objets personnalisés & packaging',    items: ['T-shirts, casquettes, stylos sérigraphiés', 'Boîtes, pochettes, étiquettes personnalisées', 'Trophées, plaques gravées', 'Goodies entreprise et institutionnel'] },
         ],
       },
@@ -135,10 +135,10 @@ export const SERVICES_CONTENT = {
 // Vidéos : src: '/videos/realisations/nom.mp4'
 export const GALERIE_ITEMS = [
   { type: 'image', src: null, captionFr: 'Impression bâche grand format',      captionEn: 'Large format banner printing' },
-  { type: 'video', src: null, captionFr: 'Reportage atelier imprimerie',        captionEn: 'Print workshop footage' },
+  { type: 'video', src: '/videos/sogecop_vid.mp4', captionFr: 'Aménagement',        captionEn: 'Fit-out' },
   { type: 'image', src: null, captionFr: 'Installation réseau entreprise',      captionEn: 'Corporate network installation' },
   { type: 'image', src: null, captionFr: 'Aménagement salle de réunion',        captionEn: 'Meeting room fit-out' },
-  { type: 'video', src: null, captionFr: 'Visite chantier aménagement',         captionEn: 'Fit-out site walkthrough' },
+  { type: 'video', src: '/videos/sogecop_vid2.mp4', captionFr: 'Aménagement bureau',         captionEn: 'Desk fit-out ' },
   { type: 'image', src: null, captionFr: 'Livraison fournitures marché public', captionEn: 'Public tender supply delivery' },
 ];
 

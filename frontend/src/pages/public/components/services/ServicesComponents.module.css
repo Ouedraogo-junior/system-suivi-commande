@@ -204,6 +204,68 @@
 
 .galCaption { margin-top: 8px; font-size: 11.5px; color: var(--text-muted, #5a5a52); line-height: 1.4; padding: 0 2px; }
 
+/* Vignette vidéo cliquable (cadre inchangé) */
+.galVideoThumbWrap { position: relative; cursor: pointer; }
+
+.galPlayOverlay {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0,0,0,0.15);
+  transition: background 0.15s;
+}
+.galVideoThumbWrap:hover .galPlayOverlay { background: rgba(0,0,0,0.32); }
+
+.galPlayOverlayIcon {
+  width: 48px; height: 48px;
+  background: rgba(255,255,255,0.92);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--brown);
+}
+
+/* Lightbox */
+.lightboxOverlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.88);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 2000; padding: 24px;
+}
+
+.lightboxBox {
+  position: relative;
+  display: flex; flex-direction: column; align-items: center;
+  max-width: 92vw; max-height: 92vh;
+}
+
+/* Paysage : largeur contrainte */
+.lightboxLandscape .lightboxVideo {
+  width: 100%; max-width: 900px; max-height: 80vh;
+}
+
+/* Portrait (vidéo téléphone) : hauteur contrainte, pas de crop */
+.lightboxPortrait .lightboxVideo {
+  height: 80vh; max-width: 90vw; width: auto;
+}
+
+.lightboxVideo {
+  border-radius: 8px;
+  background: #000;
+  display: block;
+}
+
+.lightboxClose {
+  position: absolute; top: -40px; right: 0;
+  background: none; border: none; color: #fff; cursor: pointer;
+  padding: 4px;
+}
+
+.lightboxCaption {
+  color: rgba(255,255,255,0.8);
+  font-size: 13px;
+  margin-top: 10px;
+  text-align: center;
+}
+
 /* ── RESPONSIVE ── */
 @media (max-width: 1024px) {
   .categoriesGrid { grid-template-columns: repeat(2, 1fr); }

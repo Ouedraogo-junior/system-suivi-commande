@@ -28,7 +28,7 @@ export const APROPOS_CONTENT = {
        images: [
         { src: '/images/logo.png', alt: 'Siège social SOGECOP — Ouaga 2000' },
         { src: 'services/amenagement.png', alt: 'L\'équipe SOGECOP' },
-        { src: 'partners/CNSF.png', alt: 'L\'équipe SOGECOP' },
+        // { src: 'partners/CNSF.png', alt: 'L\'équipe SOGECOP' },
       ],
     },
 
@@ -48,7 +48,7 @@ export const APROPOS_CONTENT = {
    partenaires: {
       label: 'Ils nous font confiance',
       title: 'Nos clients',
-      body: "Sogecop SARL collabore avec un réseau de partenaires locaux et internationaux pour fournir des services qui répondent aux exigences de ses clients avec professionnalisme et rigueur.",
+      body: "Chez SOGECOP SARL, la confiance de nos clients est notre plus grande réussite. Nous accompagnons des entreprises, des institutions publiques, des ONG, des collectivités, ainsi que des particuliers, en leur proposant des solutions fiables, innovantes et adaptées à leurs besoins. Grâce à notre expertise multidisciplinaire et à notre réseau de partenaires nationaux et internationaux, nous répondons avec efficacité aux exigences de chaque projet, en garantissant qualité, professionnalisme et respect des délais. Chaque collaboration est fondée sur des valeurs essentielles : l’écoute, la transparence, la rigueur et la satisfaction client. C’est cette approche qui nous permet de bâtir des relations durables avec ceux qui nous accordent leur confiance.",
       items: [
         { src: '/partners/logo_anders.png', alt: 'ANDERS' },
         { src: '/partners/logo_dream_studio.png', alt: 'Dream Studio' },
@@ -56,7 +56,7 @@ export const APROPOS_CONTENT = {
         { src: '/partners/logo_SF2I.png', alt: 'SF2I' },
         { src: '/partners/S_H_C_G_Niger.jpeg', alt: 'S H C G Niger' },
         { src: '/partners/chancellerie.png', alt: 'Grande Chancellerie' },
-        { src: '/partners/CNSF.png', alt: 'CNSF' },
+        { src: '/partners/CNSF.jpeg', alt: 'CNSF' },
         // { src: '/partners/BBI.png', alt: 'BBI' },
         { src: '/partners/sonagess.png', alt: 'SONAGESS' },
         // { src: '/partners/riadel.png', alt: 'RIADEL' },
@@ -101,7 +101,7 @@ export const APROPOS_CONTENT = {
       associations: [
         { src: '/associations/ass_be_leader.png', alt: 'Association Be Leader' },
         { src: '/associations/logo_boost_faso.jpeg', alt: 'Association Boost Faso' },
-        { src: null, alt: 'Association Beog-yinga' },
+        // { src: null, alt: 'Association Beog-yinga' },
         // { src: null, alt: 'Association 4' },
         // { src: null, alt: 'Association 5' },
         // { src: null, alt: 'Association 6' },

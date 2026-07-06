@@ -38,7 +38,18 @@ class CommandeController extends Controller
 
         $perPage = min((int) $request->get('per_page', 20), 100);
 
-        return response()->json($query->paginate($perPage));
+        $paginated = $query->paginate($perPage);
+
+        return response()->json([
+            'data' => $paginated->items(),
+            'meta' => [
+                'total'        => $paginated->total(),
+                'current_page' => $paginated->currentPage(),
+                'last_page'    => $paginated->lastPage(),
+                'from'         => $paginated->firstItem(),
+                'to'           => $paginated->lastItem(),
+            ],
+        ]);
     }
 
     // GET /api/commandes/{id}
@@ -168,9 +179,9 @@ class CommandeController extends Controller
                         ]
                     );
                 }
-
-                $commande->recalculerMontantTotal();
             }
+
+            $commande->recalculerMontantTotal();
         });
 
         return response()->json(
@@ -236,7 +247,7 @@ class CommandeController extends Controller
         ];
 
         $prefix = $prefixes[$service];
-        $mois = strtoupper(now()->locale('fr')->isoFormat('MMM'));
+        $mois = str_replace('.', '', strtoupper(now()->locale('fr')->isoFormat('MMM')));
         $annee  = now()->year;
 
         $dernierNumero = Commande::where('service', $service)

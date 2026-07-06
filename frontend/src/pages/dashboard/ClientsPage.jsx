@@ -23,6 +23,7 @@ function ModalClient({ client, onConfirm, onCancel, loading }) {
   const [form, setForm] = useState({
     nom_complet: client?.nom_complet ?? '',
     telephone:   client?.telephone  ?? '',
+    fax:         client?.fax        ?? '',
     email:       client?.email      ?? '',
     adresse:     client?.adresse    ?? '',
   });
@@ -49,11 +50,17 @@ function ModalClient({ client, onConfirm, onCancel, loading }) {
               placeholder="Ex: 70000000" />
           </div>
           <div className={styles.fgroup}>
-            <label className={styles.flabel}>Email</label>
-            <input className={styles.finput} type="email" value={form.email}
-              onChange={e => set('email', e.target.value)}
-              placeholder="Ex: jean@email.com" />
+            <label className={styles.flabel}>Fax</label>
+            <input className={styles.finput} value={form.fax}
+              onChange={e => set('fax', e.target.value)}
+              placeholder="Ex: 25300000" />
           </div>
+        </div>
+        <div className={styles.fgroup}>
+          <label className={styles.flabel}>Email</label>
+          <input className={styles.finput} type="email" value={form.email}
+            onChange={e => set('email', e.target.value)}
+            placeholder="Ex: jean@email.com" />
         </div>
         <div className={styles.fgroup}>
           <label className={styles.flabel}>Adresse</label>
@@ -103,6 +110,10 @@ function PanneauDetail({ client, onEdit, onClose, onNouvelleCommande }) {
           <div className={styles.detailField}>
             <div className={styles.detailLabel}>Téléphone</div>
             <div className={styles.detailValue}>{client.telephone ?? '—'}</div>
+          </div>
+          <div className={styles.detailField}>
+            <div className={styles.detailLabel}>Fax</div>
+            <div className={styles.detailValue}>{client.fax ?? '—'}</div>
           </div>
           <div className={styles.detailField}>
             <div className={styles.detailLabel}>Email</div>
@@ -161,18 +172,19 @@ export default function ClientsPage() {
 
   // ── Fetch ─────────────────────────────────────────────
   const fetchClients = useCallback(async () => {
-    setLoading(true);
-    try {
-      const { data } = await api.get('/clients', {
-        params: { search: search || undefined, page },
-      });
-      setClients(data.data);
-      setMeta(data.meta);
-    } finally {
-      setLoading(false);
-    }
-  }, [search, page]);
-
+  setLoading(true);
+  try {
+    const { data } = await api.get('/clients', {
+      params: { search: search || undefined, page },
+    });
+    setClients(data.data);
+    setMeta(data.meta);
+  } catch (e) {
+    console.error('Erreur fetch clients:', e.response?.status, e.response?.data);
+  } finally {
+    setLoading(false);
+  }
+}, [search, page]);
   useEffect(() => { fetchClients(); }, [fetchClients]);
 
   // Debounce search
@@ -244,6 +256,7 @@ export default function ClientsPage() {
                 <tr>
                   <th>Client</th>
                   <th>Téléphone</th>
+                  <th>Fax</th>
                   <th>Email</th>
                   <th style={{ width: '80px', textAlign: 'center' }}>Commandes</th>
                   <th>Ajouté le</th>
@@ -253,7 +266,7 @@ export default function ClientsPage() {
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan={6} className={styles.emptyRow}>Chargement...</td>
+                    <td colSpan={7} className={styles.emptyRow}>Chargement...</td>
                   </tr>
                 ) : clients.length > 0 ? (
                   clients.map(c => (
@@ -270,6 +283,7 @@ export default function ClientsPage() {
                         </div>
                       </td>
                       <td className={styles.muted}>{c.telephone ?? '—'}</td>
+                      <td className={styles.muted}>{c.fax ?? '—'}</td>
                       <td className={styles.muted}>{c.email ?? '—'}</td>
                       <td style={{ textAlign: 'center' }}>
                         <span className={styles.countBadge}>
@@ -293,7 +307,7 @@ export default function ClientsPage() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={6} className={styles.emptyRow}>
+                    <td colSpan={7} className={styles.emptyRow}>
                       Aucun client trouvé.
                     </td>
                   </tr>

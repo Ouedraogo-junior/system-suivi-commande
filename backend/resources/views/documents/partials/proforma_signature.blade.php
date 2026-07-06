@@ -1,32 +1,54 @@
 {{-- Ce fragment est écrit séparément par DocumentController::ecrireAvecGardeFouSignature().
-     Il réutilise les classes .sig-fixed / .sig-tbl définies dans le <style> des vues
-     documents.proforma et documents.facture, qui restent actives pour tout appel
-     WriteHTML() ultérieur sur le même objet $mpdf.
-
-     Structure à PLAT (pas de tables imbriquées) : les deux colonnes partagent les
-     mêmes <tr>, ce qui garantit que "Le client" et "Le responsable" sont sur la
-     même ligne, quelle que soit la présence du cachet. --}}
+     Il réutilise la classe .sig-fixed définie dans le <style> des vues
+     documents.proforma et documents.facture.
+     Chaque colonne (client / responsable) est un tableau imbriqué INDÉPENDANT :
+     les titres restent alignés car les deux <td> parents démarrent à la même
+     position (vertical-align:top), mais le contenu de chaque colonne (nom du
+     client vs signature+cachet+nom du responsable) s'enchaîne SANS dépendre
+     de la hauteur de l'autre colonne. C'est ce découplage qui manquait dans
+     les versions précédentes (position:absolute imbriqué non fiable dans mPDF,
+     et lignes <tr> partagées qui synchronisaient les hauteurs à tort). --}}
 <div class="sig-fixed">
-<table class="sig-tbl" cellpadding="0" cellspacing="0">
+<table class="sig-tbl" cellpadding="0" cellspacing="0" style="width:100%;">
 <tr>
-<td style="width:50%; text-align:center; font-size:7pt; font-weight:bold; color:#1a5c2a; text-transform:uppercase; padding-bottom:4px;">Le client</td>
-<td style="width:50%; text-align:center; font-size:7pt; font-weight:bold; color:#1a5c2a; text-transform:uppercase; padding-bottom:4px;">Le responsable</td>
-</tr>
-<tr>
-<td style="text-align:center; height:48px; vertical-align:bottom;">&nbsp;</td>
-<td style="text-align:center; height:48px; vertical-align:bottom;">
-@if(file_exists(public_path('images/cachet.png')))
-<img src="{{ public_path('images/cachet.png') }}" style="height:45px;">
-@endif
-</td>
-</tr>
-<tr>
-<td style="text-align:center; font-size:7.5pt; color:#333; padding-top:2px;">{{ $commande->client->nom_complet }}</td>
-<td style="text-align:center; font-size:7.5pt; color:#333; padding-top:2px;">
-@if(!empty($commande->agent))
-{{ $commande->agent->prenom ?? '' }} {{ $commande->agent->nom ?? '' }}
-@endif
-</td>
+  <td style="width:50%; vertical-align:top; padding:0;">
+    <table cellpadding="0" cellspacing="0" style="width:100%;">
+      <tr>
+        <td style="text-align:center; font-size:7pt; font-weight:bold; color:#1a5c2a; text-transform:uppercase; padding-bottom:4px;">Le client</td>
+      </tr>
+      <tr>
+        <td style="text-align:center; font-size:7.5pt; color:#333; padding-top:35px;">{{ $commande->client->nom_complet }}</td>
+      </tr>
+    </table>
+  </td>
+  <td style="width:50%; vertical-align:top; padding:0;">
+    <table cellpadding="0" cellspacing="0" style="width:100%;">
+      <tr>
+        <td style="text-align:center; font-size:7pt; font-weight:bold; color:#1a5c2a; text-transform:uppercase; padding-bottom:4px;">Le responsable</td>
+      </tr>
+      <tr>
+        <td style="text-align:center;">
+          @if(file_exists(public_path('images/signature.png')))
+          <img src="{{ public_path('images/signature.png') }}" style="max-height:68px;">
+          @endif
+        </td>
+      </tr>
+      <tr>
+        <td style="text-align:center;">
+          @if(file_exists(public_path('images/cachet.jpeg')))
+          <img src="{{ public_path('images/cachet.jpeg') }}" style="max-height:120px;">
+          @endif
+        </td>
+      </tr>
+      <tr>
+        <td style="text-align:center; font-size:7.5pt; color:#333; padding-top:2px;">
+          @if(!empty($commande->agent))
+          {{ $commande->agent->prenom ?? '' }} {{ $commande->agent->nom ?? '' }}
+          @endif
+        </td>
+      </tr>
+    </table>
+  </td>
 </tr>
 </table>
 </div>

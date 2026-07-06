@@ -106,15 +106,24 @@ export default function useDocumentModal(commande, type, onClose) {
   return new Blob([response.data], { type: 'application/pdf' });
 };
 
+function slugify(str = '') {
+  return str
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // retire les accents
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+}
+
 const handleTelecharger = async () => {
   setGenerating(true);
   try {
     const blob = await genererBlob();
     const url  = window.URL.createObjectURL(blob);
 
+    const nomClient = slugify(commande.client?.nom_complet || 'client');
     const link = document.createElement('a');
     link.href = url;
-    link.download = `${type.toLowerCase()}-${commande.id}.pdf`;
+    link.download = `${type.toLowerCase()}-${nomClient}.pdf`;
     document.body.appendChild(link);
     link.click();
     link.remove();

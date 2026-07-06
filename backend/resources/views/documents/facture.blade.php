@@ -189,7 +189,7 @@ body { font-family: 'DejaVu Sans', sans-serif; font-size: 10pt; color: #1a1a1a; 
     </tr>
     @if($calculs['remise_taux'] > 0)
     <tr>
-      <td class="lbl">Remise ({{ $calculs['remise_taux'] }}%)</td>
+      <td class="lbl">Remise</td>
       <td class="val" style="color:#c0392b;">− {{ number_format($calculs['montant_remise'], 0, ',', ' ') }} F</td>
     </tr>
     @endif

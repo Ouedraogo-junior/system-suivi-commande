@@ -233,6 +233,13 @@
   background: var(--white, #fff);
 }
 
+.partenairesLayout {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 56px;
+  align-items: center;
+}
+
 .partenairesHeader { margin-bottom: 28px; }
 
 /* Carousel container */
@@ -398,6 +405,7 @@
 
 @media (max-width: 768px) {
   .partenaires { padding: 40px 20px; }
+  .partenairesLayout { grid-template-columns: 1fr; gap: 24px; }
   .partSlide { gap: 10px; }
   .partCell { min-height: 110px; padding: 16px 12px; }
   .partLogo { max-height: 56px; }
