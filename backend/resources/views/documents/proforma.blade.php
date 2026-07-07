@@ -162,10 +162,12 @@
       <td class="lbl">Montant brut</td>
       <td class="val">{{ number_format($calculs['montant_brut'], 0, ',', ' ') }} F</td>
     </tr>
-    @if($calculs['remise_taux'] > 0)
+    @if($calculs['montant_remise'] > 0)
     <tr>
-      <td class="lbl">Remise</td>
-      <td class="val" style="color:#c0392b;">− {{ number_format($calculs['montant_remise'], 0, ',', ' ') }} F</td>
+        <td class="lbl">Remise</td>
+        <td class="val" style="color:#c0392b;">
+            − {{ number_format($calculs['montant_remise'], 0, ',', ' ') }} F
+        </td>
     </tr>
     @endif
     <tr>

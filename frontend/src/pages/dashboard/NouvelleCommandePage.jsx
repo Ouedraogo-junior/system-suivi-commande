@@ -8,6 +8,7 @@ import ClientSection from '../../components/dashboard/nouvellecommande/ClientSec
 import LignesSection, { calcSousTotal } from '../../components/dashboard/nouvellecommande/LignesSection';
 import ParametresSection from '../../components/dashboard/nouvellecommande/ParametresSection';
 import RecapitulatifSection from '../../components/dashboard/nouvellecommande/RecapitulatifSection';
+import { ModalVersement } from '../dashboard/commandedetail/ModalsCommande';
 import api from '../../lib/axios';
 import styles from './NouvelleCommandePage.module.css';
 
@@ -43,6 +44,23 @@ export default function NouvelleCommandePage() {
   // ── State post-création ───────────────────────────────────────────────────
   const [commandeCree, setCommandeCree] = useState(null);
   const [modalDoc,     setModalDoc]     = useState(null); // 'PRO_FORMA' | null
+
+  const [modalVersement, setModalVersement]     = useState(false);
+  const [versementLoading, setVersementLoading] = useState(false);
+
+  const handleAjouterVersement = async (payload) => {
+    setVersementLoading(true);
+    try {
+      await api.post(`/commandes/${commandeCree.id}/versements`, payload);
+      const { data } = await api.get(`/commandes/${commandeCree.id}`);
+      setCommandeCree(data);
+      setModalVersement(false);
+    } catch (e) {
+      alert(e.response?.data?.message ?? 'Erreur lors de l\'enregistrement du versement.');
+    } finally {
+      setVersementLoading(false);
+    }
+  };
 
   // ── Pré-remplissage client depuis navigation ──────────────────────────────
   useEffect(() => {
@@ -95,15 +113,11 @@ export default function NouvelleCommandePage() {
     if (!valider()) return;
     setLoading(true);
     try {
-      // Le backend attend toujours un pourcentage : on convertit le montant fixe avant l'envoi.
-      const remisePourcentage = remiseType === 'MONTANT'
-        ? (sousTotal > 0 ? (montantRemise / sousTotal) * 100 : 0)
-        : remiseValeur;
-
       const { data } = await api.post('/commandes', {
         client_id:      clientSelectionne.id,
         service,
-        remise:         remisePourcentage,
+        remise:         remiseValeur,
+        remise_type:    remiseType,
         tva_applicable: tva,
         tva_taux:       tva ? tvaTaux : 0,
         date_echeance:  dateEcheance || null,
@@ -116,9 +130,9 @@ export default function NouvelleCommandePage() {
         })),
       });
 
-      console.log('réponse API complète:', data);
-      console.log('tva_applicable:', data.tva_applicable);
-      console.log('tva_taux:', data.tva_taux);
+      // console.log('réponse API complète:', data);
+      // console.log('tva_applicable:', data.tva_applicable);
+      // console.log('tva_taux:', data.tva_taux);
 
       setCommandeCree(data);
     } catch (e) {
@@ -181,9 +195,11 @@ export default function NouvelleCommandePage() {
             total={total}
             loading={loading}
             commandeCree={commandeCree}
+            montantRestant={commandeCree ? commandeCree.montant_total - commandeCree.montant_paye : 0}
             onSubmit={handleSubmit}
             onGenererProForma={() => setModalDoc('PRO_FORMA')}
             onVoirCommande={() => navigate(`${basePath}/commandes/${commandeCree.id}`)}
+            onAjouterVersement={() => setModalVersement(true)}
           />
         </div>
 
@@ -197,6 +213,15 @@ export default function NouvelleCommandePage() {
             setModalDoc(null);
             navigate(`${basePath}/commandes/${commandeCree.id}`);
           }}
+        />
+      )}
+
+      {modalVersement && commandeCree && (
+        <ModalVersement
+          montantRestant={commandeCree.montant_total - commandeCree.montant_paye}
+          onConfirm={handleAjouterVersement}
+          onCancel={() => setModalVersement(false)}
+          loading={versementLoading}
         />
       )}
     </AppLayout>

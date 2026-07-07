@@ -8,6 +8,7 @@ use App\Models\HistoriqueCommande;
 use App\Models\LigneCommande;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class CommandeController extends Controller
 {
@@ -72,10 +73,11 @@ class CommandeController extends Controller
     // POST /api/commandes
     public function store(Request $request)
     {
-        $data = $request->validate([
+        $validator = Validator::make($request->all(), [
             'client_id'      => 'required|exists:clients,id',
             'service'        => 'required|in:IMPRIMERIE,INFORMATIQUE,NEGOCE,AMENAGEMENT',
-            'remise'         => 'nullable|numeric|min:0|max:100',
+            'remise_type'    => 'nullable|in:PERCENT,MONTANT',
+            'remise'         => 'nullable|numeric|min:0',
             'tva_applicable' => 'boolean', 
             'tva_taux' => 'nullable|numeric|min:0|max:100',
             'date_echeance'  => 'nullable|date',
@@ -86,6 +88,26 @@ class CommandeController extends Controller
             'lignes.*.prix_unitaire'=> 'required|numeric|min:0',
         ]);
 
+        $validator->after(function ($validator) use ($request) {
+              $type   = $request->input('remise_type', 'PERCENT');
+              $remise = (float) $request->input('remise', 0);
+         
+              if ($type === 'PERCENT' && $remise > 100) {
+                  $validator->errors()->add('remise', 'La remise en pourcentage ne peut pas dépasser 100.');
+              }
+         
+              if ($type === 'MONTANT') {
+                  $sousTotal = collect($request->input('lignes', []))
+                      ->sum(fn ($l) => ($l['quantite'] ?? 0) * ($l['prix_unitaire'] ?? 0));
+         
+                  if ($remise > $sousTotal) {
+                      $validator->errors()->add('remise', 'La remise ne peut pas dépasser le sous-total.');
+                  }
+              }
+          });
+         
+        $data = $validator->validate();
+
         DB::transaction(function () use ($data, $request, &$commande) {
             $commande = Commande::create([
                 'reference'      => $this->genererReference($data['service']),
@@ -95,6 +117,7 @@ class CommandeController extends Controller
                 'statut'         => 'EN_ATTENTE',
                 'statut_paiement'=> 'NON_PAYE',
                 'remise'         => $data['remise'] ?? 0,
+                'remise_type'    => $data['remise_type'] ?? 'PERCENT',
                 'tva_applicable' => $data['tva_applicable'] ?? false,
                 'tva_taux' => $data['tva_taux'] ?? 18.00,
                 'date_echeance'  => $data['date_echeance'] ?? null,
@@ -136,9 +159,10 @@ class CommandeController extends Controller
     {
         $this->authorizeCommande($request, $commande);
 
-        $data = $request->validate([
+        $validator = Validator::make($request->all(), [
             'service'        => 'sometimes|in:IMPRIMERIE,INFORMATIQUE,NEGOCE,AMENAGEMENT',
-            'remise'         => 'nullable|numeric|min:0|max:100',
+            'remise_type'    => 'nullable|in:PERCENT,MONTANT',
+            'remise'         => 'nullable|numeric|min:0',
             'tva_applicable' => 'boolean',
             'tva_taux' => 'nullable|numeric|min:0|max:100',
             'date_echeance'  => 'nullable|date',
@@ -149,6 +173,31 @@ class CommandeController extends Controller
             'lignes.*.quantite'     => 'required|numeric|min:0.01',
             'lignes.*.prix_unitaire'=> 'required|numeric|min:0',
         ]);
+
+        $validator->after(function ($validator) use ($request, $commande) {
+              if (!$request->has('remise')) {
+                  return; // remise non modifiée
+              }
+         
+              $type   = $request->input('remise_type', $commande->remise_type);
+              $remise = (float) $request->input('remise');
+         
+              if ($type === 'PERCENT' && $remise > 100) {
+                  $validator->errors()->add('remise', 'La remise en pourcentage ne peut pas dépasser 100.');
+              }
+         
+              if ($type === 'MONTANT') {
+                  $sousTotal = $request->has('lignes')
+                      ? collect($request->input('lignes'))->sum(fn ($l) => ($l['quantite'] ?? 0) * ($l['prix_unitaire'] ?? 0))
+                      : $commande->lignes()->sum('sous_total');
+         
+                  if ($remise > $sousTotal) {
+                      $validator->errors()->add('remise', 'La remise ne peut pas dépasser le sous-total.');
+                  }
+              }
+          });
+         
+        $data = $validator->validate();
 
         DB::transaction(function () use ($data, $request, $commande) {
             $commande->update(collect($data)->except('lignes')->toArray());
@@ -194,6 +243,12 @@ class CommandeController extends Controller
     {
         $this->authorizeCommande($request, $commande);
 
+        if ($commande->statut === 'TERMINE') {
+            return response()->json([
+                'message' => 'Une commande terminée ne peut plus changer de statut.',
+            ], 422);
+        }
+
         $data = $request->validate([
             'statut'      => 'required|in:EN_ATTENTE,EN_COURS,TERMINE,ANNULE',
             'commentaire' => 'nullable|string',
@@ -205,11 +260,11 @@ class CommandeController extends Controller
             $commande->update(['statut' => $data['statut']]);
 
             HistoriqueCommande::create([
-                'commande_id'   => $commande->id,
-                'agent_id'      => $request->user()->id,
-                'ancien_statut' => $ancienStatut,
-                'nouveau_statut'=> $data['statut'],
-                'commentaire'   => $data['commentaire'] ?? null,
+                'commande_id'    => $commande->id,
+                'agent_id'       => $request->user()->id,
+                'ancien_statut'  => $ancienStatut,
+                'nouveau_statut' => $data['statut'],
+                'commentaire'    => $data['commentaire'] ?? null,
             ]);
         });
 

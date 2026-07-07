@@ -158,6 +158,7 @@ export default function CommandeDetailPage() {
 
       {modalVers && (
         <ModalVersement
+          montantRestant={commande.montant_total - commande.montant_paye}
           onConfirm={async (payload) => {
             if (await handleVersement(payload)) setModalVers(false);
           }}

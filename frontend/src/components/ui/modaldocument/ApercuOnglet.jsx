@@ -110,7 +110,7 @@ export default function ApercuOnglet({
     );
   }
 
-  const c    = calculs(commande, remiseTaux, acompteTaux, acompteFinal, tvaTaux);
+  const c = calculs(commande, remiseType, remiseTaux, acompteTaux, acompteFinal, tvaTaux);
   const today = new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
   const dateEcheance = commande.date_echeance
     ? new Date(commande.date_echeance).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' })

@@ -12,9 +12,11 @@ function calcBrut(commande) {
   return commande.lignes?.reduce((s, l) => s + Number(l.sous_total), 0) || 0;
 }
 
-export function calculs(commande, remiseTaux, acompteTaux, acompteMontantLibre, tvaTaux = 0) {
+export function calculs(commande, remiseType, remiseValeur, acompteTaux, acompteMontantLibre, tvaTaux = 0) {
   const brut       = calcBrut(commande);
-  const remise     = brut * (remiseTaux / 100);
+  const remise     = remiseType === 'MONTANT'
+     ? Math.min(remiseValeur, brut)
+     : brut * (remiseValeur / 100);
   const netHT      = brut - remise;
   const tva        = netHT * (tvaTaux / 100);
   const ttc        = netHT + tva;
@@ -39,9 +41,13 @@ export default function useDocumentModal(commande, type, onClose) {
   const tvaTaux       = commande.tva_applicable ? (Number(commande.tva_taux) || 18) : 0;
 
   // Remise (pro forma + facture)
-  const [remiseTaux,    setRemiseTaux]    = useState(Number(commande.remise) || 0);
-  const [remiseLibre,   setRemiseLibre]   = useState('');
-  const [remiseType, setRemiseTypeRaw] = useState('PERCENT'); // 'PERCENT' | 'MONTANT'
+  const [remiseType, setRemiseTypeRaw] = useState(commande.remise_type ?? 'PERCENT');
+  const [remiseTaux,    setRemiseTaux]    = useState(
+     commande.remise_type === 'MONTANT' ? 0 : (Number(commande.remise) || 0)
+   );
+   const [remiseLibre,   setRemiseLibre]   = useState(
+     commande.remise_type === 'MONTANT' ? String(commande.remise ?? '') : ''
+   );
 
   const setRemiseType = (t) => {
     setRemiseTypeRaw(t);
@@ -73,7 +79,7 @@ export default function useDocumentModal(commande, type, onClose) {
   const brut = calcBrut(commande);
 
   const remiseFinal = remiseType === 'MONTANT'
-    ? (brut > 0 ? (Math.min(parseFloat(remiseLibre) || 0, brut) / brut) * 100 : 0)
+    ? Math.min(parseFloat(remiseLibre) || 0, brut)
     : (remiseLibre !== '' ? parseFloat(remiseLibre) || 0 : remiseTaux);
 
   const acompteFinal  = acompteLibre !== '' ? parseFloat(acompteLibre) || 0 : 0;
@@ -86,7 +92,8 @@ export default function useDocumentModal(commande, type, onClose) {
   if (isProforma) {
     endpoint = `/commandes/${commande.id}/documents/proforma`;
     payload  = {
-      remise_taux:      remiseFinal,
+      remise_type:      remiseType,
+      remise:           remiseFinal,
       delai_livraison:  delaiFinal,
       acompte_taux:     acompteLibre !== '' ? 0 : acompteTaux,
       acompte_montant:  acompteLibre !== '' ? parseFloat(acompteLibre) || 0 : 0,
@@ -96,7 +103,7 @@ export default function useDocumentModal(commande, type, onClose) {
     };
   } else if (isFacture) {
     endpoint = `/commandes/${commande.id}/documents/facture`;
-    payload  = { remise_taux: remiseFinal, tva_taux: tvaTaux };
+    payload  = { remise_type: remiseType, remise: remiseFinal, tva_taux: tvaTaux };
   } else {
     endpoint = `/commandes/${commande.id}/documents/bon-livraison`;
     payload  = { objet: objet || null };

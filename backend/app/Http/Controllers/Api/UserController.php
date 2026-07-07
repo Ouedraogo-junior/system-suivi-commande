@@ -65,6 +65,7 @@ class UserController extends Controller
         $user = $request->user();
 
         $data = $request->validate([
+            'nom_complet'      => 'sometimes|required|string|max:150',
             'pseudo'           => "sometimes|required|string|max:50|unique:users,pseudo,{$user->id}",
             'password'         => 'nullable|string|min:6|confirmed',
             'current_password' => 'required_with:password|string',
@@ -80,8 +81,9 @@ class UserController extends Controller
         }
 
         $user->update([
-            'pseudo'   => $data['pseudo']   ?? $user->pseudo,
-            'password' => $data['password'] ?? $user->password,
+            'nom_complet' => $data['nom_complet'] ?? $user->nom_complet,
+            'pseudo'      => $data['pseudo']      ?? $user->pseudo,
+            'password'    => $data['password']    ?? $user->password,
         ]);
 
         return response()->json($user->fresh());

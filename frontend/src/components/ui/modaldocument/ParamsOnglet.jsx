@@ -45,7 +45,7 @@ export default function ParamsOnglet({
   }
 
   // ── Pro forma / Facture ────────────────────────────────────────────────────
-  const c = calculs(commande, remiseFinal, acompteTaux, acompteFinal, tvaTaux);
+  const c = calculs(commande, remiseType, remiseFinal, acompteTaux, acompteFinal, tvaTaux);
 
   return (
     <div className={styles.params}>

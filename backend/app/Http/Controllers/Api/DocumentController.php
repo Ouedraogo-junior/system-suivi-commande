@@ -35,7 +35,8 @@ class DocumentController extends Controller
         $this->authorizeCommande($request, $commande);
 
         $data = $request->validate([
-            'remise_taux'      => 'nullable|numeric|min:0|max:100',
+            'remise_type' => 'nullable|in:PERCENT,MONTANT',
+            'remise'      => 'nullable|numeric|min:0',
             'delai_livraison'  => 'nullable|string|max:100',
             'acompte_taux'     => 'nullable|numeric|min:0|max:100',
             'acompte_montant'  => 'nullable|numeric|min:0',
@@ -119,7 +120,8 @@ class DocumentController extends Controller
         $this->authorizeCommande($request, $commande);
 
         $data = $request->validate([
-            'remise_taux' => 'nullable|numeric|min:0|max:100',
+            'remise_type' => 'nullable|in:PERCENT,MONTANT',
+            'remise'      => 'nullable|numeric|min:0',
         ]);
 
         $commande->load(['client', 'lignes', 'versements', 'agent']);
@@ -269,10 +271,15 @@ class DocumentController extends Controller
 
     private function calculer(Commande $commande, array $data): array
     {
-        $montantBrut   = $commande->lignes->sum('sous_total');
-        $remiseTaux    = $data['remise_taux'] ?? $commande->remise ?? 0;
-        $montantRemise = $montantBrut * ($remiseTaux / 100);
-        $montantNetHT  = $montantBrut - $montantRemise;
+        $montantBrut  = $commande->lignes->sum('sous_total');
+        $remiseType   = $data['remise_type'] ?? $commande->remise_type ?? 'PERCENT';
+        $remiseValeur = $data['remise'] ?? $commande->remise ?? 0;
+
+        $montantRemise = $remiseType === 'MONTANT'
+            ? min($remiseValeur, $montantBrut)
+            : $montantBrut * ($remiseValeur / 100);
+
+        $montantNetHT = $montantBrut - $montantRemise;
 
         // ── TVA : lire tva_applicable et tva_taux depuis la commande ──
         $tvaTaux    = $commande->tva_applicable ? (float) ($commande->tva_taux ?? 18) : 0;
@@ -292,7 +299,8 @@ class DocumentController extends Controller
 
         return [
             'montant_brut'      => $montantBrut,
-            'remise_taux'       => $remiseTaux,
+            'remise_type'       => $remiseType,
+            'remise_valeur'     => $remiseValeur,
             'montant_remise'    => $montantRemise,
             'montant_net_ht'    => $montantNetHT,
             'tva_applicable'    => $commande->tva_applicable, // ← passer aux blades

@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import Button from '../../../components/ui/Button';
 import styles from '../../../pages/dashboard/CommandeDetailPage.module.css';
-import { STATUTS_SUIVANTS, STATUTS_LABELS, formatMontant } from './useCommandeDetail';
+import { STATUTS_SUIVANTS, STATUTS_LABELS, formatMontant, calculerMontantRemise } from './useCommandeDetail';
 
 // ===== MODAL STATUT =====
 export function ModalStatut({ statut, onConfirm, onCancel, loading }) {
@@ -54,31 +54,44 @@ export function ModalStatut({ statut, onConfirm, onCancel, loading }) {
 }
 
 // ===== MODAL VERSEMENT =====
-export function ModalVersement({ onConfirm, onCancel, loading }) {
+export function ModalVersement({ montantRestant, onConfirm, onCancel, loading }) {
   const [form, setForm] = useState({
     montant:        '',
     date_versement: new Date().toISOString().split('T')[0],
     reference:      '',
     notes:          '',
   });
-
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+
+  const montantSaisi = Number(form.montant) || 0;
+  const depasse = montantSaisi > montantRestant;
 
   return (
     <div className={styles.modalOverlay}>
       <div className={styles.modal}>
         <div className={styles.modalTitle}>Enregistrer un versement</div>
+
         <div className={styles.fgroup}>
           <label className={styles.flabel}>Montant (FCFA) *</label>
+          <div style={{ fontSize: '0.85em', color: '#666', marginBottom: 4 }}>
+            Reste à payer : {formatMontant(montantRestant)}
+          </div>
           <input
             className={styles.finput}
             type="number"
             min="1"
+            max={montantRestant}
             value={form.montant}
             onChange={e => set('montant', e.target.value)}
             placeholder="Ex: 50000"
           />
+          {depasse && (
+            <div style={{ fontSize: '0.85em', color: '#c0392b', marginTop: 4 }}>
+              Le montant dépasse le reste à payer ({formatMontant(montantRestant)}).
+            </div>
+          )}
         </div>
+
         <div className={styles.fgroup}>
           <label className={styles.flabel}>Date du versement *</label>
           <input
@@ -88,6 +101,7 @@ export function ModalVersement({ onConfirm, onCancel, loading }) {
             onChange={e => set('date_versement', e.target.value)}
           />
         </div>
+
         <div className={styles.fgroup}>
           <label className={styles.flabel}>Référence</label>
           <input
@@ -98,6 +112,7 @@ export function ModalVersement({ onConfirm, onCancel, loading }) {
             placeholder="N° reçu, virement..."
           />
         </div>
+
         <div className={styles.fgroup}>
           <label className={styles.flabel}>Notes</label>
           <textarea
@@ -107,13 +122,14 @@ export function ModalVersement({ onConfirm, onCancel, loading }) {
             placeholder="Remarques éventuelles..."
           />
         </div>
+
         <div className={styles.modalActions}>
           <Button variant="ghost" size="sm" onClick={onCancel}>Annuler</Button>
           <Button
             variant="primary"
             size="sm"
             onClick={() => onConfirm(form)}
-            disabled={loading || !form.montant || !form.date_versement}
+            disabled={loading || !form.montant || !form.date_versement || depasse}
           >
             {loading ? 'En cours...' : 'Enregistrer'}
           </Button>
@@ -203,7 +219,7 @@ export function ModalEditionLignes({ commande, onConfirm, onCancel, loading }) {
     setLignes(ls => ls.filter((_, idx) => idx !== i));
 
   const brut  = lignes.reduce((s, l) => s + (Number(l.quantite) * Number(l.prix_unitaire)), 0);
-  const remise = brut * (commande.remise / 100);
+  const remise = calculerMontantRemise(brut, commande);
   const netHT  = brut - remise;
   const tva    = commande.tva_applicable ? netHT * ((commande.tva_taux ?? 18) / 100) : 0;
   const total  = netHT + tva;
@@ -287,7 +303,7 @@ export function ModalEditionLignes({ commande, onConfirm, onCancel, loading }) {
           </div>
           {commande.remise > 0 && (
             <div className={styles.editRecapRow}>
-              <span>Remise ({commande.remise}%)</span>
+              <span>Remise ({commande.remise_type === 'MONTANT' ? formatMontant(commande.remise) : `${commande.remise}%`})</span>
               <span>− {formatMontant(remise)}</span>
             </div>
           )}
@@ -325,7 +341,7 @@ export function ModalEditionInfos({ commande, onConfirm, onCancel, loading }) {
 
   const [form, setForm] = useState({
     remise:         String(commande.remise ?? 0),
-    remiseType:     'PERCENT', // 'PERCENT' | 'MONTANT'
+    remiseType:     commande.remise_type ?? 'PERCENT',
     tva_applicable: !!commande.tva_applicable,
     tva_taux:       String(commande.tva_taux ?? 18),
     date_echeance:  commande.date_echeance ? commande.date_echeance.split('T')[0] : '',
@@ -342,13 +358,10 @@ export function ModalEditionInfos({ commande, onConfirm, onCancel, loading }) {
   const valide = remiseValide && tvaTauxValide;
 
   const handleConfirm = () => {
-    const remiseValeur = Number(form.remise) || 0;
-    const remisePourcentage = form.remiseType === 'MONTANT'
-      ? (brut > 0 ? (Math.min(remiseValeur, brut) / brut) * 100 : 0)
-      : remiseValeur;
 
     onConfirm({
-      remise:         remisePourcentage,
+      remise:         Number(form.remise) || 0,
+      remise_type:    form.remiseType,
       tva_applicable: form.tva_applicable,
       tva_taux:       form.tva_applicable ? Number(form.tva_taux) : 0,
       date_echeance:  form.date_echeance || null,

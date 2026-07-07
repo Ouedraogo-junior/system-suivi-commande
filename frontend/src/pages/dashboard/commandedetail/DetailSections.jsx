@@ -2,7 +2,7 @@
 import { Section } from './InformationsSection';
 import Button from '../../../components/ui/Button';
 import styles from '../../../pages/dashboard/CommandeDetailPage.module.css';
-import { STATUTS_LABELS, formatDate, formatMontant, getInitiales } from './useCommandeDetail';
+import { STATUTS_LABELS, formatDate, formatMontant, getInitiales, calculerMontantRemise } from './useCommandeDetail';
 
 // ===== CLIENT =====
 export function ClientCard({ commande }) {
@@ -65,7 +65,10 @@ export function HistoriqueSection({ commande }) {
 
 // ===== LIGNES DE COMMANDE =====
 export function LignesCommandeSection({ commande, onModifier }) {
-  return (
+  const sousTotal   = commande.lignes?.reduce((s, l) => s + Number(l.sous_total), 0) || 0;
+  const montantRemise = calculerMontantRemise(sousTotal, commande);
+  const apresRemise    = sousTotal - montantRemise;
+ return (
     <Section
       title="Lignes de commande"
       action={
@@ -99,24 +102,14 @@ export function LignesCommandeSection({ commande, onModifier }) {
           <tfoot>
             {commande.remise > 0 && (
               <tr className={styles.tfootRow}>
-                <td colSpan={3}>Remise ({commande.remise}%)</td>
-                <td>
-                  − {formatMontant(
-                    commande.lignes?.reduce((s, l) => s + Number(l.sous_total), 0)
-                    * commande.remise / 100
-                  )}
-                </td>
+                <td colSpan={3}>Remise</td>
+                  <td>− {formatMontant(montantRemise)}</td>
               </tr>
             )}
             {commande.tva_applicable && (
               <tr className={styles.tfootRow}>
                 <td colSpan={3}>TVA ({commande.tva_taux ?? 18}%)</td>
-                <td>
-                  + {formatMontant(
-                    commande.lignes?.reduce((s, l) => s + Number(l.sous_total), 0)
-                    * (1 - commande.remise / 100) * ((commande.tva_taux ?? 18) / 100)
-                  )}
-                </td>
+                <td>+ {formatMontant(apresRemise * ((commande.tva_taux ?? 18) / 100))}</td>
               </tr>
             )}
             <tr className={styles.tfootTotal}>

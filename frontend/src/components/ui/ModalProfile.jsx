@@ -8,6 +8,7 @@ import styles from './ModalProfile.module.css';
 export default function ModalProfile({ onClose }) {
   const { user, updateUser } = useAuth();
 
+  const [nomComplet, setNomComplet]         = useState(user?.nom_complet ?? '');
   const [pseudo, setPseudo]                 = useState(user?.pseudo ?? '');
   const [currentPassword, setCurrentPassword] = useState('');
   const [password, setPassword]             = useState('');
@@ -24,7 +25,7 @@ export default function ModalProfile({ onClose }) {
     setSuccessMsg('');
     setSaving(true);
 
-    const payload = { pseudo };
+    const payload = { pseudo, nom_complet: nomComplet };
     if (wantsPasswordChange) {
       payload.current_password      = currentPassword;
       payload.password              = password;
@@ -65,6 +66,15 @@ export default function ModalProfile({ onClose }) {
             {successMsg && (
               <div className={styles.successBox}>{successMsg}</div>
             )}
+
+            <label className={styles.label}>Nom complet</label>
+            <input
+              className={styles.input}
+              type="text"
+              value={nomComplet}
+              onChange={(e) => setNomComplet(e.target.value)}
+            />
+            {errors.nom_complet && <div className={styles.fieldError}>{errors.nom_complet[0]}</div>}
 
             <label className={styles.label}>Pseudo</label>
             <input

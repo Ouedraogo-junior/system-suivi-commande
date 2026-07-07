@@ -1,7 +1,7 @@
 // src/components/dashboard/commandedetail/InformationsSection.jsx
 import Button from '../../../components/ui/Button';
 import styles from '../../../pages/dashboard/CommandeDetailPage.module.css';
-import { SERVICES_LABELS, formatDate } from './useCommandeDetail';
+import { SERVICES_LABELS, formatDate, formatRemise } from './useCommandeDetail';
 
 // ===== SECTION CARD (générique, réutilisée par les autres blocs) =====
 export function Section({ title, children, action }) {
@@ -44,7 +44,7 @@ export default function InformationsSection({ commande, peutModifier, onModifier
         <InfoField label="Service"    value={SERVICES_LABELS[commande.service]} />
         <InfoField label="Agent"      value={commande.agent?.nom_complet} />
         <InfoField label="Échéance"   value={formatDate(commande.date_echeance)} />
-        <InfoField label="Remise"     value={commande.remise > 0 ? `${commande.remise}%` : 'Aucune'} />
+        <InfoField label="Remise"     value={formatRemise(commande)} />
         <InfoField label="TVA" value={commande.tva_applicable ? `Applicable (${commande.tva_taux ?? 18}%)` : 'Non applicable'} />
         <InfoField label="Créée le"   value={formatDate(commande.created_at)} />
       </div>

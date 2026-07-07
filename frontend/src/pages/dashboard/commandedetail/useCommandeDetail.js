@@ -29,6 +29,20 @@ export function formatMontant(v) {
   return Number(v || 0).toLocaleString('fr-FR') + ' F';
 }
 
+export function formatRemise(commande) {
+   if (!commande.remise || commande.remise <= 0) return 'Aucune';
+   return commande.remise_type === 'MONTANT'
+   ? formatMontant(commande.remise)
+   : `${commande.remise}%`;
+}
+
+export function calculerMontantRemise(sousTotal, commande) {
+   if (!commande.remise || commande.remise <= 0) return 0;
+   return commande.remise_type === 'MONTANT'
+     ? Math.min(commande.remise, sousTotal)
+     : sousTotal * (commande.remise / 100);
+ }
+
 export function formatDate(d) {
   if (!d) return '—';
   return new Date(d).toLocaleDateString('fr-FR', {
