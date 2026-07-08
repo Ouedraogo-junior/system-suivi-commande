@@ -14,6 +14,7 @@ export default function ParamsOnglet({
   conditions,    setConditions,
   validite,      setValidite,      validiteLibre, setValiditeLibre,
   objet,         setObjet,
+  sansCachet,    setSansCachet,
   remiseFinal, acompteFinal,
 }) {
   // ── Bon de livraison : formulaire minimal ──────────────────────────────────
@@ -191,6 +192,18 @@ export default function ParamsOnglet({
       )}
 
       {/* ── Récap rapide ── */}
+
+      <div className={styles.paramGroup}>
+        <label className={styles.paramLabel} style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+          <input
+            type="checkbox"
+            checked={sansCachet}
+            onChange={e => setSansCachet(e.target.checked)}
+          />
+          Sans cachet ni signature (signature manuscrite)
+        </label>
+      </div>
+
       <div className={styles.recapRapide}>
         <div className={styles.recapRow}><span>Total TTC</span><span>{fmt(c.ttc)}</span></div>
         {isProforma && c.acompte > 0 && (

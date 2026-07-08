@@ -42,7 +42,7 @@ class DocumentController extends Controller
             'acompte_montant'  => 'nullable|numeric|min:0',
             'conditions'       => 'nullable|string|max:2000',  
             'validite'         => 'nullable|string|max:100',   
-
+            'sans_cachet'      => 'nullable|boolean',
         ]);
 
         $commande->load(['client', 'lignes', 'agent']);
@@ -85,18 +85,22 @@ class DocumentController extends Controller
 
         $htmlSignature = view('documents.partials.proforma_signature', [
             'commande' => $commande,
+            'sansCachet' => $data['sans_cachet'] ?? false,
         ])->render();
 
         $mpdf = new Mpdf([
             'mode'              => 'utf-8',
             'format'            => 'A4',
-            'margin_top'        => 36,   // 30 → 36 : plus de marge pour le logo
-            'margin_bottom'     => 24,   // 20 → 24 : sécurité pour le footer
+            'margin_top'        => 50,   // 42 → 50 : couvre logo (29mm) + paddings + marge de sécurité
+            'margin_bottom'     => 24,
             'margin_left'       => 12,
             'margin_right'      => 12,
-            'margin_header'     => 9,    // 5 → 9 : hors zone non imprimable
-            'margin_footer'     => 9,    // 5 → 9 : hors zone non imprimable
+            'margin_header'     => 13,
+            'margin_footer'     => 9,
         ]);
+
+        $mpdf->defaultheaderline = 0;
+        $mpdf->defaultfooterline = 0;
 
         $mpdf->SetHTMLHeader($this->buildHeader($commande));
         $mpdf->SetHTMLFooter($this->buildFooter());
@@ -122,6 +126,7 @@ class DocumentController extends Controller
         $data = $request->validate([
             'remise_type' => 'nullable|in:PERCENT,MONTANT',
             'remise'      => 'nullable|numeric|min:0',
+            'sans_cachet'      => 'nullable|boolean',
         ]);
 
         $commande->load(['client', 'lignes', 'versements', 'agent']);
@@ -155,18 +160,22 @@ class DocumentController extends Controller
 
         $htmlSignature = view('documents.partials.proforma_signature', [
              'commande' => $commande,
+             'sansCachet' => $data['sans_cachet'] ?? false,
          ])->render();
 
         $mpdf = new Mpdf([
             'mode'              => 'utf-8',
             'format'            => 'A4',
-            'margin_top'        => 36,   // 30 → 36 : plus de marge pour le logo
-            'margin_bottom'     => 24,   // 20 → 24 : sécurité pour le footer
+            'margin_top'        => 50,   // 42 → 50 : couvre logo (29mm) + paddings + marge de sécurité
+            'margin_bottom'     => 24,
             'margin_left'       => 12,
             'margin_right'      => 12,
-            'margin_header'     => 9,    // 5 → 9 : hors zone non imprimable
-            'margin_footer'     => 9,    // 5 → 9 : hors zone non imprimable
+            'margin_header'     => 13,
+            'margin_footer'     => 9,
         ]);
+
+        $mpdf->defaultheaderline = 0;
+        $mpdf->defaultfooterline = 0;
 
         $mpdf->SetHTMLHeader($this->buildHeader($commande));
         $mpdf->SetHTMLFooter($this->buildFooter());
@@ -215,27 +224,36 @@ class DocumentController extends Controller
             $reference = $existant->reference;
         }
     
-        $html = view('documents.bon_livraison', [
-            'commande'  => $commande,
-            'reference' => $reference,
-            'objet'     => $data['objet'] ?? null,
-            'document'  => $document,
-        ])->render();
+        $htmlContenu = view('documents.bon_livraison', [
+             'commande'  => $commande,
+             'reference' => $reference,
+             'objet'     => $data['objet'] ?? null,
+             'document'  => $document,
+         ])->render();
+ 
+         $htmlSignature = view('documents.partials.proforma_signature', [
+             'commande'    => $commande,
+             'labelGauche' => 'Le Réceptionniste',
+             'labelDroite' => 'Le Fournisseur',
+         ])->render();
     
-        $mpdf = new \Mpdf\Mpdf([
-            'mode'          => 'utf-8',
-            'format'        => 'A4',
-            'margin_top'    => 36,
-            'margin_bottom' => 24,
-            'margin_left'   => 12,
-            'margin_right'  => 12,
-            'margin_header' => 9,
-            'margin_footer' => 9,
+        $mpdf = new Mpdf([
+            'mode'              => 'utf-8',
+            'format'            => 'A4',
+            'margin_top'        => 50,   // 42 → 50 : couvre logo (29mm) + paddings + marge de sécurité
+            'margin_bottom'     => 24,
+            'margin_left'       => 12,
+            'margin_right'      => 12,
+            'margin_header'     => 13,
+            'margin_footer'     => 9,
         ]);
+
+        $mpdf->defaultheaderline = 0;
+        $mpdf->defaultfooterline = 0;
     
         $mpdf->SetHTMLHeader($this->buildHeader($commande));
         $mpdf->SetHTMLFooter($this->buildFooter());
-        $mpdf->WriteHTML($html);
+        $this->ecrireAvecGardeFouSignature($mpdf, $htmlContenu, $htmlSignature);
     
         $chemin = "documents/{$reference}.pdf";
         Storage::put($chemin, $mpdf->Output('', 'S'));
@@ -322,35 +340,34 @@ class DocumentController extends Controller
             'NEGOCE'       => 'NEG',
             'AMENAGEMENT'  => 'AME',
         ];
-    
+
         $prefixesType = [
-            'PRO_FORMA'    => '',      // pas de préfixe type pour pro forma et facture
+            'PRO_FORMA'    => '',
             'FACTURE'      => '',
             'BON_LIVRAISON'=> 'BL',
         ];
-    
+
         $servicePrefix = $prefixesService[$commande->service] ?? 'DOC';
         $typePrefix    = $prefixesType[$type] ?? '';
         $mois          = str_replace('.', '', strtoupper(now()->locale('fr')->isoFormat('MMM')));
         $annee         = now()->year;
-    
-        // Construire le préfixe complet : IMP-BL-MAI ou IMP-MAI
+
         $prefix = $typePrefix
             ? "{$servicePrefix}-{$typePrefix}-{$mois}"
             : "{$servicePrefix}-{$mois}";
-    
+
+        // Numérotation continue, tous secteurs confondus (même type de document, même mois/année)
         $count = Document::where('type', $type)
             ->whereYear('created_at', $annee)
             ->whereMonth('created_at', now()->month)
-            ->whereHas('commande', fn($q) => $q->where('service', $commande->service))
             ->count();
-    
+
         do {
             $count++;
             $numero    = str_pad($count, 4, '0', STR_PAD_LEFT);
             $reference = "{$prefix}-{$numero}";
         } while (Document::where('reference', $reference)->exists());
-    
+
         return $reference;
     }
 
@@ -364,10 +381,17 @@ class DocumentController extends Controller
 
     private function buildHeader(Commande $commande): string
     {
-        $logoPath = public_path('images/logo_large.png');
+        $logoPath = public_path('images/logo_large_clean.png'); // ← remplacé par le fichier nettoyé
+
+        $largeurUtile = 186; // mm, largeur imprimable A4 (210 - 12 - 12)
 
         if (file_exists($logoPath)) {
-            $logoHtml = '<img src="' . $logoPath . '" style="width:100%; max-height:70px; object-fit:contain;">';
+            [$imgW, $imgH] = getimagesize($logoPath);
+            $ratio       = $imgH / $imgW;
+            $largeurLogo = $largeurUtile;
+            $hauteurLogo = round($largeurLogo * $ratio, 1);
+
+            $logoHtml = '<img src="' . $logoPath . '" width="' . $largeurLogo . 'mm" height="' . $hauteurLogo . 'mm">';
         } else {
             $logoHtml = '
                 <div style="font-size:13pt; font-weight:bold; color:#1a5c2a; letter-spacing:2px;">SOGECOP</div>
@@ -375,17 +399,12 @@ class DocumentController extends Controller
         }
 
         return '
-        <div style="
-            width: 100%;
-            text-align: center;
-            border-bottom: 2px solid #1a5c2a;
-            padding-bottom: 6px;
-            margin-bottom: 8px;
-        ">
-            ' . $logoHtml . '
-        </div>';
+        <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:18px;">
+            <tr>
+                <td align="center">' . $logoHtml . '</td>
+            </tr>
+        </table>';
     }
-
     private function buildFooter(): string
     {
         return '
@@ -394,10 +413,9 @@ class DocumentController extends Controller
             background:#1a5c2a;
             color:#fff;
             text-align:center;
-            padding:4px 8px;
-            font-size:6.5pt;
-            line-height:1.5;
-            border-top:2px solid #c8a84b;
+            padding:6px 8px;
+            font-size:8.5pt;
+            line-height:1.6;
             box-sizing: border-box;
         ">
         Adresse : Rue du 17 Octobre, Bld Muammar Kaddafi, 11 BP 268 OUAGA 11, Ouaga 2000, Burkina Faso

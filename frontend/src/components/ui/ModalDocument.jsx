@@ -60,6 +60,7 @@ export default function ModalDocument({ commande, type, onClose }) {
             validite={modal.validite}           setValidite={modal.setValidite}
             validiteLibre={modal.validiteLibre} setValiditeLibre={modal.setValiditeLibre}
             objet={modal.objet}                 setObjet={modal.setObjet}
+            sansCachet={modal.sansCachet}       setSansCachet={modal.setSansCachet}
             remiseFinal={modal.remiseFinal}
             acompteFinal={modal.acompteFinal}
           />
@@ -79,6 +80,7 @@ export default function ModalDocument({ commande, type, onClose }) {
           validiteFinal={modal.validiteFinal}
           isImprimerie={modal.isImprimerie}
           objet={modal.objet}
+          sansCachet={modal.sansCachet}
         />
 
         {/* Footer */}

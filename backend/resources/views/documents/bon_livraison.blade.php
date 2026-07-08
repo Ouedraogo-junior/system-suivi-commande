@@ -55,7 +55,7 @@
   .tbl tbody tr { border-bottom: 1px solid #e8e8e8; }
   .tbl tbody tr.alt { background: #f8f6f0; }
   .tbl tbody td { padding: 5px 6px; font-size: 7.5pt; }
-  .tbl tbody td.c { text-align: center; color: #999; font-size: 7pt; }
+  .tbl tbody td.c { text-align: center; color: #000; font-size: 7pt; }
   .tbl tbody td.r { text-align: right; }
   .tbl tbody td.obs { color: #ccc; font-style: italic; font-size: 7pt; }
 
@@ -68,14 +68,14 @@
   }
 
   /* ── SIGNATURES ── */
-  .sig-tbl { width: 100%; margin-top: 30px; }
-  .sig-tbl td { width: 50%; text-align: center; vertical-align: top; padding-top: 8px; }
-  .sig-label {
-    font-size: 7pt; font-weight: bold;
-    color: #1a5c2a; text-transform: uppercase;
-    text-decoration: underline;
-    display: block; margin-bottom: 40px;
-  }
+  .sig-fixed {
+     position: fixed;
+     bottom: 10mm;
+     left: 0mm;
+     width: 100%;
+   }
+   .sig-tbl { width: 100%; }
+
 </style>
 </head>
 <body>
@@ -151,7 +151,7 @@
   </div>
 
   <!-- SIGNATURES -->
-  <table class="sig-tbl" cellpadding="0" cellspacing="0">
+  {{-- <table class="sig-tbl" cellpadding="0" cellspacing="0">
     <tr>
       <td>
         <span class="sig-label">Le Réceptionniste</span>
@@ -160,7 +160,7 @@
         <span class="sig-label">Le Fournisseur</span>
       </td>
     </tr>
-  </table>
+  </table> --}}
 
 </div>
 </body>

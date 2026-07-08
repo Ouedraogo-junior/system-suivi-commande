@@ -98,6 +98,7 @@ export default function ApercuOnglet({
   delai, tvaTaux,
   conditions, validiteFinal,
   objet,
+  sansCachet,
 }) {
   const isBonLiv   = type === 'BON_LIVRAISON';
   const isProforma = type === 'PRO_FORMA';
@@ -139,8 +140,10 @@ export default function ApercuOnglet({
 
         {/* Titre */}
         <div className={styles.apercuTitre}>
-          {isProforma ? 'FACTURE PRO FORMA' : 'FACTURE DÉFINITIVE'} {commande.reference}
-          <div className={styles.apercuTitreRef}>Émis le {today}</div>
+          {isProforma ? 'FACTURE PRO FORMA' : 'FACTURE DÉFINITIVE'}
+           <div className={styles.apercuTitreRef}>
+             Référence générée à l'impression &nbsp;|&nbsp; {today}
+           </div>
         </div>
 
         {/* Meta */}
@@ -150,7 +153,9 @@ export default function ApercuOnglet({
             <div className={styles.apercuMetaVal}>
               <strong>{commande.client?.nom_complet}</strong>
               {commande.client?.organisation && <div>{commande.client.organisation}</div>}
+              {commande.client?.adresse && <div>{commande.client.adresse}</div>}
               {commande.client?.telephone && <div>Tél : {commande.client.telephone}</div>}
+              {commande.client?.fax && <div>Fax : {commande.client.fax}</div>}
               {commande.client?.email && <div>{commande.client.email}</div>}
             </div>
           </div>
@@ -280,7 +285,7 @@ export default function ApercuOnglet({
           </div>
           <div style={{ textAlign: 'right' }}>
             <div className={styles.apercuSigLabel}>Le responsable</div>
-            <div className={styles.apercuSigLine}>Signature &amp; cachet</div>
+            <div className={styles.apercuSigLine}>{sansCachet ? <>&nbsp;</> : 'Signature & cachet'}</div>
           </div>
         </div>
 

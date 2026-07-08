@@ -41,7 +41,7 @@ body { font-family: 'DejaVu Sans', sans-serif; font-size: 10pt; color: #1a1a1a; 
 .tbl tbody tr.alt { background: #f8f6f0; }
 .tbl tbody td { padding: 4px 6px; font-size: 9.5pt; }
 .tbl tbody td.r { text-align: right; }
-.tbl tbody td.c { text-align: center; color: #999; font-size: 9pt; }
+.tbl tbody td.c { text-align: center; color: #000; font-size: 10.5pt; }
 
 /* ── CALCULS ── */
 .calc-tbl { width: 46%; border-collapse: collapse; margin-left: auto; margin-bottom: 8px; }
@@ -87,7 +87,7 @@ body { font-family: 'DejaVu Sans', sans-serif; font-size: 10pt; color: #1a1a1a; 
 /* ── SIGNATURES ── */
 .sig-fixed {
   position: fixed;
-  bottom: 0mm;
+  bottom: 10mm;   /* aligné sur margin_bottom, au-dessus du footer */
   left: 0mm;
   width: 100%;
 }
@@ -129,7 +129,9 @@ body { font-family: 'DejaVu Sans', sans-serif; font-size: 10pt; color: #1a1a1a; 
         <div class="bloc-val">
           <strong>{{ $commande->client->nom_complet }}</strong><br>
           @if($commande->client->organisation){{ $commande->client->organisation }}<br>@endif
+          @if($commande->client->adresse){{ $commande->client->adresse }}<br>@endif
           @if($commande->client->telephone)Tél : {{ $commande->client->telephone }}<br>@endif
+          @if($commande->client->fax)Fax : {{ $commande->client->fax }}<br>@endif
           @if($commande->client->email){{ $commande->client->email }}@endif
         </div>
       </td>
@@ -228,7 +230,7 @@ body { font-family: 'DejaVu Sans', sans-serif; font-size: 10pt; color: #1a1a1a; 
       <tr>
         <td style="color:#1a5c2a; font-weight:bold;">Versement {{ $v->numero_versement }}</td>
         <td>{{ \Carbon\Carbon::parse($v->date_versement)->locale('fr')->isoFormat('D MMM YYYY') }}</td>
-        <td style="color:#666;">{{ $v->reference ?? '—' }}</td>
+        <td style="color:#000; font-size: 10.5pt;">{{ $v->reference ?? '—' }}</td>
         <td class="r">{{ number_format($v->montant, 0, ',', ' ') }} F</td>
       </tr>
       @endforeach

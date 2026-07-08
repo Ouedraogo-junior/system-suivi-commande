@@ -43,7 +43,7 @@
   .tbl tbody tr.alt { background: #f8f6f0; }
   .tbl tbody td { padding: 4px 6px; font-size: 9.5pt; }
   .tbl tbody td.r { text-align: right; }
-  .tbl tbody td.c { text-align: center; color: #999; font-size: 9pt; }
+  .tbl tbody td.c { text-align: center; color: #000; font-size: 10.5pt; }
 
   /* ── CALCULS ── */
   .calc-tbl { width: 46%; border-collapse: collapse; margin-left: auto; margin-bottom: 8px; }
@@ -69,7 +69,7 @@
   /* ── SIGNATURES (écrites séparément par le contrôleur, voir partials/proforma_signature) ── */
   .sig-fixed {
     position: fixed;
-    bottom: 0mm;
+    bottom: 10mm;
     left: 0mm;
     width: 100%;
   }
@@ -111,7 +111,9 @@
         <div class="bloc-val">
           <strong>{{ $commande->client->nom_complet }}</strong><br>
           @if($commande->client->organisation){{ $commande->client->organisation }}<br>@endif
+          @if($commande->client->adresse){{ $commande->client->adresse }}<br>@endif
           @if($commande->client->telephone)Tél : {{ $commande->client->telephone }}<br>@endif
+          @if($commande->client->fax)Fax : {{ $commande->client->fax }}<br>@endif
           @if($commande->client->email){{ $commande->client->email }}@endif
         </div>
       </td>

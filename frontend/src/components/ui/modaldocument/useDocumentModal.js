@@ -71,6 +71,9 @@ export default function useDocumentModal(commande, type, onClose) {
   // Objet (bon de livraison)
   const [objet,         setObjet]         = useState('');
 
+  // Sans cachet ni signature (facture + pro forma) — signature manuscrite prévue
+  const [sansCachet,    setSansCachet]    = useState(false);
+
   // UI
   const [onglet,     setOnglet]     = useState('params');
   const [generating, setGenerating] = useState(false);
@@ -100,10 +103,11 @@ export default function useDocumentModal(commande, type, onClose) {
       tva_taux:         tvaTaux,
       conditions:       conditions || null,
       validite:         validiteFinal,
+      sans_cachet:      sansCachet,
     };
   } else if (isFacture) {
     endpoint = `/commandes/${commande.id}/documents/facture`;
-    payload  = { remise_type: remiseType, remise: remiseFinal, tva_taux: tvaTaux };
+    payload  = { remise_type: remiseType, remise: remiseFinal, tva_taux: tvaTaux, sans_cachet: sansCachet };
   } else {
     endpoint = `/commandes/${commande.id}/documents/bon-livraison`;
     payload  = { objet: objet || null };
@@ -183,6 +187,7 @@ const handleImprimer = async () => {
     conditions,    setConditions,
     validite,      setValidite,      validiteLibre, setValiditeLibre,
     objet,         setObjet,
+    sansCachet,    setSansCachet,
     onglet,        setOnglet,
     generating,
     remiseFinal, acompteFinal, delaiFinal, validiteFinal,

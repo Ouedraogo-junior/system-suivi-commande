@@ -302,16 +302,16 @@ class CommandeController extends Controller
         ];
 
         $prefix = $prefixes[$service];
-        $mois = str_replace('.', '', strtoupper(now()->locale('fr')->isoFormat('MMM')));
+        $mois   = str_replace('.', '', strtoupper(now()->locale('fr')->isoFormat('MMM')));
         $annee  = now()->year;
 
-        $dernierNumero = Commande::where('service', $service)
-            ->whereYear('created_at', $annee)
+        // Numérotation continue, tous secteurs confondus, pour le mois en cours
+        $dernierNumero = Commande::whereYear('created_at', $annee)
             ->whereMonth('created_at', now()->month)
             ->count();
 
         $numero = str_pad($dernierNumero + 1, 3, '0', STR_PAD_LEFT);
 
-        return "$prefix-$mois-$numero"; // ex: IMP-MAI-001
+        return "$prefix-$mois-$numero";
     }
 }

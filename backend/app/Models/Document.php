@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Document extends Model
 {
-    public $timestamps = false;
 
     protected $fillable = [
         'commande_id', 'agent_id', 'type',
@@ -16,6 +15,7 @@ class Document extends Model
     protected $casts = [
         'synced_at'  => 'datetime',
         'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     public function commande()
