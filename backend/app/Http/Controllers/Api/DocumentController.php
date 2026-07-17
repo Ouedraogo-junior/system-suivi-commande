@@ -419,8 +419,8 @@ class DocumentController extends Controller
             box-sizing: border-box;
         ">
         Adresse : Rue du 17 Octobre, Bld Muammar Kaddafi, 11 BP 268 OUAGA 11, Ouaga 2000, Burkina Faso
-        &nbsp;|&nbsp; Tél : (+226) 55 08 86 36 / 70 51 13 84
-        &nbsp;|&nbsp; <span style="color:#c8a84b;">sogecop.sarl.bf@gmail.com</span>
+        &nbsp;|&nbsp; Tél : (+226) 55 08 86 36 / 70 61 94 24 / 58 52 58 87
+        &nbsp;|&nbsp; <span style="color:#c8a84b;">contact.info@sogecop.com</span>
         &nbsp;|&nbsp; RCCM : BF-OUA-01-2023-B12-04313 | IFU : 00200104U
         &nbsp;|&nbsp; Page {PAGENO} / {nbpg}
         </div>';

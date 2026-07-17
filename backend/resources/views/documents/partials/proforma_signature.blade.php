@@ -13,44 +13,35 @@
 <tr>
   <td style="width:50%; vertical-align:top; padding:0;">
     <table cellpadding="0" cellspacing="0" style="width:100%;">
-      <tr>
-        <td style="text-align:center; font-size:7pt; font-weight:bold; color:#1a5c2a; text-transform:uppercase; padding-bottom:4px;">{{ $labelGauche ?? 'Le client' }}</td>
-      </tr>
-      <tr>
-        <td style="text-align:center; font-size:7.5pt; color:#333; padding-top:35px;">{{ $commande->client->nom_complet }}</td>
-      </tr>
+    <tr>
+    <td style="text-align:center; font-size:7pt; font-weight:bold; color:#1a5c2a; text-transform:uppercase; padding-bottom:4px;">{{ $labelGauche ?? 'Le client' }}</td>
+    </tr>
+    <tr>
+    <td style="text-align:center; font-size:7.5pt; color:#333; padding-top:80px;">{{ $commande->client->nom_complet }}</td>
+    </tr>
     </table>
-  </td>
-  <td style="width:50%; vertical-align:top; padding:0;">
+    </td>
+    <td style="width:50%; vertical-align:top; padding:0;">
     <table cellpadding="0" cellspacing="0" style="width:100%;">
-      <tr>
-        <td style="text-align:center; font-size:7pt; font-weight:bold; color:#1a5c2a; text-transform:uppercase; padding-bottom:4px;">{{ $labelDroite ?? 'Le responsable' }}</td>
-      </tr>
-      {{--  --}}
-      <tr>
-        <td style="text-align:center;">
-          @if(empty($sansCachet) && file_exists(public_path('images/signature.png')))
-            <img src="{{ public_path('images/signature.png') }}" style="max-height:68px;">
-          @endif
-        </td>
-      </tr>
-      <tr>
-         <td style="text-align:center;">
-           @if(empty($sansCachet) && file_exists(public_path('images/cachet.jpeg')))
-            <img src="{{ public_path('images/cachet.jpeg') }}" style="max-height:120px;">
-           @endif
-      </td>
-      </tr>
-      <tr>
-      <td style="text-align:center; font-size:7.5pt; color:#333; padding-top:2px;">
-      @if(!empty($commande->agent))
-      {{ $commande->agent->prenom ?? '' }} {{ $commande->agent->nom ?? '' }}
-      @endif
-      </td>
-      </tr>
-      {{--  --}}
+    <tr>
+    <td style="text-align:center; font-size:7pt; font-weight:bold; color:#1a5c2a; text-transform:uppercase; padding-bottom:4px;">{{ $labelDroite ?? 'Le responsable' }}</td>
+    </tr>
+    <tr>
+    <td style="text-align:center;">
+    @if(empty($sansCachet) && file_exists(public_path('images/sign_cachet.png')))
+    <img src="{{ public_path('images/sign_cachet.png') }}" style="max-height:200px;">
+    @endif
+    </td>
+    </tr>
+    <tr>
+    <td style="text-align:center; font-size:7.5pt; color:#333; padding-top:2px;">
+    @if(!empty($commande->agent))
+    {{ $commande->agent->prenom ?? '' }} {{ $commande->agent->nom ?? '' }}
+    @endif
+    </td>
+    </tr>
     </table>
-  </td>
+    </td>
 </tr>
 </table>
 </div>
