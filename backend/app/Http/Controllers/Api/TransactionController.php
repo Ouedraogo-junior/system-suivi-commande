@@ -99,17 +99,16 @@ class TransactionController extends Controller
             'description'      => 'nullable|string',
         ]);
 
-        $transaction = Transaction::create([
-            ...$data,
-            'reference'         => $this->genererReference($data['type']),
-            'agent_id'          => $request->user()->id,
-            'statut_validation' => 'VALIDE',
-        ]);
+        $transaction = \DB::transaction(function () use ($data, $request) {
+            return Transaction::create([
+                ...$data,
+                'reference'         => $this->genererReference($data['type']),
+                'agent_id'          => $request->user()->id,
+                'statut_validation' => 'VALIDE',
+            ]);
+        });
 
-        return response()->json(
-            $transaction->load(['agent', 'commande']),
-            201
-        );
+        return response()->json($transaction->load(['agent', 'commande']), 201);
     }
 
     // PATCH /api/transactions/{id}/valider
@@ -143,12 +142,18 @@ class TransactionController extends Controller
     // ── Helper ──────────────────────────────────────────────
     private function genererReference(string $type): string
     {
-        $prefix  = $type === 'ENTREE' ? 'ENT' : 'SOR';
-        $mois    = strtoupper(now()->locale('fr')->isoFormat('MMM'));
-        $dernier = Transaction::where('type', $type)
+        $prefix = $type === 'ENTREE' ? 'ENT' : 'SOR';
+        $mois   = strtoupper(now()->locale('fr')->isoFormat('MMM'));
+
+        $dernierNumero = Transaction::where('type', $type)
             ->whereYear('created_at', now()->year)
             ->whereMonth('created_at', now()->month)
-            ->count();
-        return $prefix . '-' . $mois . '-' . str_pad($dernier + 1, 4, '0', STR_PAD_LEFT);
+            ->lockForUpdate()
+            ->selectRaw("MAX(CAST(SUBSTRING_INDEX(reference, '-', -1) AS UNSIGNED)) as max_num")
+            ->value('max_num');
+
+        $suivant = ($dernierNumero ?? 0) + 1;
+
+        return $prefix . '-' . $mois . '-' . str_pad($suivant, 4, '0', STR_PAD_LEFT);
     }
 }
